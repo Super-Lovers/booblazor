@@ -16,6 +16,7 @@ local gameState = "playing"
 function love.load()
     tick.recur(tickSpawnerDown, 1)
     tick.recur(moveCells, 0.05)
+    tick.recur(tickCorruption, 1)
 end
 
 function love.update(dt)
@@ -205,6 +206,7 @@ function moveProjectiles()
     end
 end
 
+-- Checks to see if any proejctile is colliding with cancer cells
 function checkProjectileCollisions()
     for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then
@@ -213,4 +215,14 @@ function checkProjectileCollisions()
             end
         end
     end
+end
+
+-- Decreases the delay for corrupted tiles, so that they eventually
+-- turn green/safe again
+function tickCorruption()
+    for x = 1, world.mapWidth do
+        for y = 1, world.mapHeight do
+            world.map[x][y]:tickCorruption()
+        end
+    end    
 end
