@@ -1,3 +1,4 @@
+require "../libs/projectile"
 Entity = Object:extend()
 
 -- Role is the type of entity it is (Player, Cancer cell)
@@ -9,6 +10,8 @@ function Entity:new(x, y, role)
     self.role = role
     self.hitpoints = 100
     self.movementSpeed = 10
+    self.lastDirection = "up"
+    self.projectilesFired = {}
 end
 
 function Entity:move(direction, deltatime)
@@ -43,4 +46,10 @@ function Entity:move(direction, deltatime)
     elseif direction == "right" then
         self.x = self.x + self.movementSpeed * deltatime
     end
+end
+
+function Entity:shoot()
+    local projectile = Projectile(self.x, self.y, self.lastDirection)
+
+    table.insert(self.projectilesFired, projectile)
 end
