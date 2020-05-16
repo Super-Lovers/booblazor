@@ -1,11 +1,12 @@
 Object = require "../libs/dependancies/classic"
 require "libs/map"
 require "libs/entity"
+require "libs/player"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
 
 -- Creates the player and puts him in the initial game position
-local player = Entity(world.mapWidth / 2 * 128, world.mapHeight / 2 * 128, "player")
+local player = Player(world.mapWidth / 2 * 128, world.mapHeight / 2 * 128, "player")
 player.movementSpeed = 380
 table.insert(world.entities, player)
 
@@ -28,7 +29,17 @@ function love.update(dt)
         if love.keyboard.isScancodeDown("s") then player:move("down", dt) end
         if love.keyboard.isScancodeDown("a") then player:move("left", dt) end
         if love.keyboard.isScancodeDown("d") then player:move("right", dt) end
+
+        if love.keyboard.isScancodeDown("j") and
+            player.currentFireRate <= 0 then
+                player:shoot()
+                player.currentFireRate = player.fireRate
+        end
     elseif (gameState == "paused") then
+    end
+
+    if player.currentFireRate > 0 then
+        player.currentFireRate = player.currentFireRate - dt * player.fireRateDecay
     end
 
     deltatime = dt
@@ -48,9 +59,10 @@ function love.draw()
     -- changed with translations
     love.graphics.origin()
 
-    for i, entity in ipairs(world.entities) do
-        love.graphics.print(entity.x, 10, i * 20)
-    end
+    -- love.graphics.print(player.currentFireRate, 10, 0)
+    -- for i, entity in ipairs(player.projectilesFired) do
+    --     love.graphics.print(entity.x, 10, i * 20)
+    -- end
 end
 
 -- TODO: Only draw the tiles in range of the player
