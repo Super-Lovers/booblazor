@@ -56,6 +56,7 @@ function love.update(dt)
         end
 
         moveProjectiles()
+        checkProjectileCollisions()
     elseif (gameState == "paused") then
     end
 
@@ -193,6 +194,16 @@ function moveProjectiles()
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
                 projectile:push(deltatime)
+            end
+        end
+    end
+end
+
+function checkProjectileCollisions()
+    for i, entity in ipairs(world.entities) do
+        if #entity.projectilesFired > 0 then
+            for j, projectile in pairs(entity.projectilesFired) do
+                projectile:checkCollisions()
             end
         end
     end

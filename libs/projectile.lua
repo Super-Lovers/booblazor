@@ -32,3 +32,15 @@ function Projectile:push(dt)
     if self.y < 0 then self:destroy() end
     if self.y > world.mapHeight * world.tileSizeY then self:destroy() end
 end
+
+function Projectile:checkCollisions()
+    for i, entity in ipairs(world.entities) do
+        if entity.role == "cancer cell" then
+            if (entity.x >= self.x - 128 and entity.x <= self.x) and
+                (entity.y >= self.y - 128 and entity.y <= self.y) then
+                
+                self:destroy()
+            end
+        end
+    end
+end

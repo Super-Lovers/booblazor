@@ -5,7 +5,7 @@ Cell = Entity:extend()
 function Cell:new(x, y, role)
     Cell.super.new(self, x, y, role)
 
-    self.delayToMove = math.random(7) + 3
+    self.delayToMove = math.random(7) + 1113
     self.delaySinceLastMove = self.delayToMove
     self.nextDirection = "up"
 end

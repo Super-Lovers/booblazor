@@ -5,8 +5,6 @@ Entity = Object:extend()
 function Entity:new(x, y, role)
     self.x = x or 0
     self.y = y or 0
-    self.worldX = 0
-    self.worldY = 0
     self.role = role
     self.hitpoints = 100
     self.movementSpeed = 10
