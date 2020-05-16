@@ -1,4 +1,4 @@
-require "libs/entity"
+require "libs/cell"
 Spawner = Object:extend()
 
 function Spawner:new(x, y)
@@ -12,7 +12,7 @@ function Spawner:new(x, y)
 end
 
 function Spawner:spawn()
-    local cell = Entity(self.x, self.y, "cancer cell")
+    local cell = Cell(self.x, self.y, "cancer cell")
 
     return cell
 end

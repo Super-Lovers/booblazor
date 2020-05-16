@@ -10,6 +10,28 @@ function Entity:new(x, y, role)
 end
 
 function Entity:move(direction, deltatime)
+    -- ==============================
+    -- Stops the entitiy from exiting the game borders
+    local rightBorder = world.mapWidth * world.tileSizeX - world.tileSizeX / 2
+    local topBorder = world.mapHeight * world.tileSizeY - world.tileSizeX / 2
+
+    if self.y < 0 then
+        self.y = 0
+        return
+    end
+    if self.y > topBorder then
+        self.y = topBorder
+        return
+    end
+    if self.x < 0 then
+        self.x = 0
+        return
+    end
+    if self.x > rightBorder then
+        self.x = rightBorder
+        return
+    end
+
     if direction == "up" then
         self.y = self.y - self.movementSpeed * deltatime
     elseif direction == "down" then

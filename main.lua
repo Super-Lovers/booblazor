@@ -2,10 +2,11 @@ Object = require "../libs/dependancies/classic"
 require "libs/map"
 require "libs/entity"
 local tick = require "libs/dependancies/tick"
+local deltatime = 0
 
 -- Creates the player and puts him in the initial game position
 local player = Entity(world.mapWidth / 2 * 128, world.mapHeight / 2 * 128, "player")
-player.movementSpeed = 128
+player.movementSpeed = 380
 table.insert(world.entities, player)
 
 -- Playing, Paused, Title Screen
@@ -13,21 +14,24 @@ local gameState = "playing"
 
 function love.load()
     tick.recur(tickSpawnerDown, 1)
+    tick.recur(moveCells, 0.05)
 end
 
-function love.update(deltatime)
-    tick.update(deltatime)
+function love.update(dt)
+    tick.update(dt)
 
     if (gameState == "playing") then
         drawMap()
         drawEntities()
 
-        if love.keyboard.isScancodeDown("w") then player:move("up", deltatime) end
-        if love.keyboard.isScancodeDown("s") then player:move("down", deltatime) end
-        if love.keyboard.isScancodeDown("a") then player:move("left", deltatime) end
-        if love.keyboard.isScancodeDown("d") then player:move("right", deltatime) end
+        if love.keyboard.isScancodeDown("w") then player:move("up", dt) end
+        if love.keyboard.isScancodeDown("s") then player:move("down", dt) end
+        if love.keyboard.isScancodeDown("a") then player:move("left", dt) end
+        if love.keyboard.isScancodeDown("d") then player:move("right", dt) end
     elseif (gameState == "paused") then
     end
+
+    deltatime = dt
 end
 
 function love.draw()
@@ -36,6 +40,9 @@ function love.draw()
     drawMap()
     drawEntities()
     drawSpawners();
+
+    love.graphics.translate(player.x + 1024 / 2, player.y + 1024 / 2)
+    love.graphics.print(player.x .. " - " .. player.y, -player.x + 1024 / 2, -player.y + 1024 / 2)
 end
 
 -- TODO: Only draw the tiles in range of the player
@@ -99,10 +106,30 @@ function tickSpawnerDown()
                 spawner.currentEggSpawnDelay = spawner.currentEggSpawnDelay - 1
             elseif spawner.currentEggSpawnDelay == 1 then
                 local cell = spawner:spawn()
+                cell.movementSpeed = math.random(30) + 20
                 table.insert(world.entities, cell)
 
                 spawner.currentEggSpawnDelay = spawner.eggSpawnDelay
                 spawner.eggsLeft = spawner.eggsLeft - 1
+            end
+        end
+    end
+end
+
+-- Moves any cells that are their turn to move
+function moveCells()
+    for i, entity in ipairs(world.entities) do
+        if entity.role == "cancer cell" then
+            if (entity.delaySinceLastMove > 1) then
+                entity.delaySinceLastMove = entity.delaySinceLastMove - 1
+            elseif (entity.delaySinceLastMove == 1) then
+                local directionToMove = entity:getDirection()
+
+                if directionToMove ~= entity.lastDirection then
+                    entity:move(directionToMove, deltatime)
+                end
+
+                entity.delaySinceLastMove = entity.delayToMove
             end
         end
     end
