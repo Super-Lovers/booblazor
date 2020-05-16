@@ -20,26 +20,43 @@ end
 
 function love.update(dt)
     tick.update(dt)
+    
+    local mouseX, mouseY = love.mouse.getPosition()
+    local mousePlayerAngle = math.atan2(mouseY - 1024/2, mouseX - 1024/2)
+
+    local angleCos = math.cos(mousePlayerAngle)
+    local angleSin = math.sin(mousePlayerAngle)
 
     if (gameState == "playing") then
-        drawMap()
-        drawEntities()
-
-        if love.keyboard.isScancodeDown("w") then player:move("up", dt) end
-        if love.keyboard.isScancodeDown("s") then player:move("down", dt) end
-        if love.keyboard.isScancodeDown("a") then player:move("left", dt) end
-        if love.keyboard.isScancodeDown("d") then player:move("right", dt) end
+        if love.keyboard.isScancodeDown("w") then
+             player:move("up", dt)
+             player.lookingDirection = "up"
+        end
+        if love.keyboard.isScancodeDown("s") then
+            player:move("down", dt)
+            player.lookingDirection = "down"
+        end
+        if love.keyboard.isScancodeDown("a") then
+            player:move("left", dt)
+            player.lookingDirection = "left"
+        end
+        if love.keyboard.isScancodeDown("d") then
+            player:move("right", dt)
+            player.lookingDirection = "right"
+        end
 
         if love.keyboard.isScancodeDown("j") and
             player.currentFireRate <= 0 then
-                player:shoot()
+                player:shoot(angleCos, angleSin, mousePlayerAngle)
                 player.currentFireRate = player.fireRate
         end
-    elseif (gameState == "paused") then
-    end
 
-    if player.currentFireRate > 0 then
-        player.currentFireRate = player.currentFireRate - dt * player.fireRateDecay
+        if player.currentFireRate > 0 then
+            player.currentFireRate = player.currentFireRate - dt * player.fireRateDecay
+        end
+
+        moveProjectiles()
+    elseif (gameState == "paused") then
     end
 
     deltatime = dt
@@ -53,7 +70,11 @@ function love.draw()
 
     drawMap()
     drawEntities()
-    drawSpawners();
+    drawSpawners()
+    drawProjectiles()
+
+    -- love.graphics.print("Cos: ".. angleCos .. "Sin: " .. angleSin, player.x, player.y)
+    -- love.graphics.print(mouseX - 1024/2 .. ", " .. mouseY - 1024/2, player.x, player.y + 20)
 
     -- Resets the coordinate system to the default one if it has been
     -- changed with translations
@@ -147,6 +168,31 @@ function moveCells()
                 end
 
                 entity.delaySinceLastMove = entity.delayToMove
+            end
+        end
+    end
+end
+
+function drawProjectiles()
+    for i, entity in ipairs(world.entities) do
+        if #entity.projectilesFired > 0 then
+            for j, projectile in pairs(entity.projectilesFired) do
+                local image = love.graphics.newImage("assets/images/laser_projectile.png")
+
+                local drawable = love.graphics.draw(image, projectile.x, projectile.y, projectile.angle, 1, 1, 2, 28)
+                
+                projectile.drawable = drawable
+            end
+        end
+    end
+end
+
+-- Pushes all the projectiles on their respectful direction and speed
+function moveProjectiles()
+    for i, entity in ipairs(world.entities) do
+        if #entity.projectilesFired > 0 then
+            for j, projectile in pairs(entity.projectilesFired) do
+                projectile:push(deltatime)
             end
         end
     end

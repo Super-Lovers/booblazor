@@ -11,10 +11,13 @@ function Entity:new(x, y, role)
     self.hitpoints = 100
     self.movementSpeed = 10
     self.lastDirection = "up"
+    self.lookingDirection = "up"
     self.projectilesFired = {}
 end
 
 function Entity:move(direction, deltatime)
+    self.lastDirection = direction
+
     -- ==============================
     -- Stops the entitiy from exiting the game borders
     local rightBorder = world.mapWidth * world.tileSizeX - world.tileSizeX / 2
@@ -48,8 +51,8 @@ function Entity:move(direction, deltatime)
     end
 end
 
-function Entity:shoot()
-    local projectile = Projectile(self.x, self.y, self.lastDirection)
+function Entity:shoot(cos, sin, angle)
+    local projectile = Projectile(#self.projectilesFired + 1, self, self.x, self.y, cos, sin, angle)
 
     table.insert(self.projectilesFired, projectile)
 end
