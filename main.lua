@@ -35,14 +35,22 @@ function love.update(dt)
 end
 
 function love.draw()
+    -- Re-positions the coordinate system to center to the player so
+    -- that when everything elses' position changes, it will be
+    -- relative to the coordinates in the translate parameters
     love.graphics.translate(-player.x + 1024 / 2, -player.y + 1024 / 2)
 
     drawMap()
     drawEntities()
     drawSpawners();
 
-    love.graphics.translate(player.x + 1024 / 2, player.y + 1024 / 2)
-    love.graphics.print(player.x .. " - " .. player.y, -player.x + 1024 / 2, -player.y + 1024 / 2)
+    -- Resets the coordinate system to the default one if it has been
+    -- changed with translations
+    love.graphics.origin()
+
+    for i, entity in ipairs(world.entities) do
+        love.graphics.print(entity.x, 10, i * 20)
+    end
 end
 
 -- TODO: Only draw the tiles in range of the player
@@ -73,15 +81,12 @@ end
 -- TODO: Only draw the entities in range of the player
 function drawEntities()
     for i, entity in ipairs(world.entities) do
-        local x = entity.x * 128 - 128
-        local y = entity.y * 128 - 128
-        
         if entity.role == "player" then
             local image = love.graphics.newImage("assets/images/player.png")
             love.graphics.draw(image, entity.x, entity.y)
         elseif entity.role == "cancer cell" then
             love.graphics.setColor(255, 255, 0, 0.8)
-            love.graphics.rectangle("fill", x, y, 64, 64)
+            love.graphics.rectangle("fill", entity.x, entity.y, 128, 128)
         end
     end
 end
@@ -106,7 +111,7 @@ function tickSpawnerDown()
                 spawner.currentEggSpawnDelay = spawner.currentEggSpawnDelay - 1
             elseif spawner.currentEggSpawnDelay == 1 then
                 local cell = spawner:spawn()
-                cell.movementSpeed = math.random(30) + 20
+                cell.movementSpeed = math.random(3800) + 2000
                 table.insert(world.entities, cell)
 
                 spawner.currentEggSpawnDelay = spawner.eggSpawnDelay

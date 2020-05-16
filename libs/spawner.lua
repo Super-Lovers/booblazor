@@ -4,6 +4,8 @@ Spawner = Object:extend()
 function Spawner:new(x, y)
     self.x = x or 0
     self.y = y or 0
+    self.worldX = 0
+    self.worldY = 0
     self.hitpoints = 100
     self.totalEggs = 10
     self.eggsLeft = self.totalEggs
@@ -12,7 +14,9 @@ function Spawner:new(x, y)
 end
 
 function Spawner:spawn()
-    local cell = Cell(self.x, self.y, "cancer cell")
+    local cell = Cell(self.worldX, self.worldY, "cancer cell")
+    cell.worldX = self.worldX
+    cell.worldY = self.worldY
 
     return cell
 end

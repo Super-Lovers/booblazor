@@ -40,6 +40,8 @@ for x = 1, world.mapWidth do
             world.map[x][y] = tile
     
             local spawner = Spawner(x, y)
+            spawner.worldX = x * world.tileSizeX
+            spawner.worldY = y * world.tileSizeY
             table.insert(world.spawners, spawner)
         end
     end
