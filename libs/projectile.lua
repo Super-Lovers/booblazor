@@ -11,12 +11,11 @@ function Projectile:new(id, entity, x, y, cos, sin, angle)
     
     self.entity = entity
     self.speed = 500
-    self.drawable = nil
+    self.attackDamage = 20
 end
 
 -- Deleted this projectile and its references (on impact)
 function Projectile:destroy()
-    self.drawable = nil
     self.entity.projectilesFired[self.id] = nil -- preferred
 
     -- Must investigate why in case I don't understand it right
@@ -34,11 +33,14 @@ function Projectile:push(dt)
 end
 
 function Projectile:checkCollisions()
-    for i, entity in ipairs(world.entities) do
-        if entity.role == "cancer cell" then
+    for i, entity in pairs(world.entities) do
+        if entity.role == "cancer cell small" or
+           entity.role == "cancer cell big" then
+
             if (entity.x >= self.x - 128 and entity.x <= self.x) and
                 (entity.y >= self.y - 128 and entity.y <= self.y) then
                 
+                entity:takeDamage(self.attackDamage)
                 self:destroy()
             end
         end

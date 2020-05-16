@@ -114,12 +114,15 @@ end
 
 -- TODO: Only draw the entities in range of the player
 function drawEntities()
-    for i, entity in ipairs(world.entities) do
+    for i, entity in pairs(world.entities) do
         if entity.role == "player" then
             local image = love.graphics.newImage("assets/images/player.png")
             love.graphics.draw(image, entity.x, entity.y)
-        elseif entity.role == "cancer cell" then
-            love.graphics.setColor(255, 255, 0, 0.8)
+        elseif entity.role == "cancer cell small" then
+            love.graphics.setColor(255, 255, 0, 0.7)
+            love.graphics.rectangle("fill", entity.x, entity.y, 128, 128)
+        elseif entity.role == "cancer cell big" then
+            love.graphics.setColor(255, 0, 1)
             love.graphics.rectangle("fill", entity.x, entity.y, 128, 128)
         end
     end
@@ -127,7 +130,7 @@ end
 
 -- TODO: Only draw the spawners in range of the player
 function drawSpawners()
-    for i, spawner in ipairs(world.spawners) do
+    for i, spawner in pairs(world.spawners) do
         local x = spawner.x * 128 - 128
         local y = spawner.y * 128 - 128
 
@@ -139,7 +142,7 @@ end
 -- Decreases the remaining seconds in the spawner's egg hatching delay until it
 -- reaches 1 to indicate its time to spawn an egg, then resets back.
 function tickSpawnerDown()
-    for i, spawner in ipairs(world.spawners) do
+    for i, spawner in pairs(world.spawners) do
         if spawner.eggsLeft > 1 then
             if spawner.currentEggSpawnDelay > 1 then
                 spawner.currentEggSpawnDelay = spawner.currentEggSpawnDelay - 1
@@ -157,8 +160,10 @@ end
 
 -- Moves any cells that are their turn to move
 function moveCells()
-    for i, entity in ipairs(world.entities) do
-        if entity.role == "cancer cell" then
+    for i, entity in pairs(world.entities) do
+        if entity.role == "cancer cell small" or
+           entity.role == "cancer cell big" then
+
             if (entity.delaySinceLastMove > 1) then
                 entity.delaySinceLastMove = entity.delaySinceLastMove - 1
             elseif (entity.delaySinceLastMove == 1) then
@@ -175,7 +180,7 @@ function moveCells()
 end
 
 function drawProjectiles()
-    for i, entity in ipairs(world.entities) do
+    for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
                 local image = love.graphics.newImage("assets/images/laser_projectile.png")
@@ -190,7 +195,7 @@ end
 
 -- Pushes all the projectiles on their respectful direction and speed
 function moveProjectiles()
-    for i, entity in ipairs(world.entities) do
+    for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
                 projectile:push(deltatime)
@@ -200,7 +205,7 @@ function moveProjectiles()
 end
 
 function checkProjectileCollisions()
-    for i, entity in ipairs(world.entities) do
+    for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
                 projectile:checkCollisions()

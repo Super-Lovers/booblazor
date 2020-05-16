@@ -1,4 +1,5 @@
 require "libs/cell"
+local lume = require "../libs/dependancies/lume"
 Spawner = Object:extend()
 
 function Spawner:new(x, y)
@@ -14,7 +15,18 @@ function Spawner:new(x, y)
 end
 
 function Spawner:spawn()
-    local cell = Cell(self.worldX - 128, self.worldY - 128, "cancer cell")
+    local cancerType = lume.weightedchoice({
+        ["cancer cell small"] = 1,
+        ["cancer cell big"] = 1
+    })
+
+    local cell = Cell(#world.entities + 1, self.worldX - 128, self.worldY - 128, cancerType)
+
+    if cancerType == "cancer cell small" then
+        cell.hitpoints = 20
+    elseif cancerType == "cancer cell big" then
+        cell.hitpoints = 100
+    end
 
     return cell
 end
