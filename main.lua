@@ -105,7 +105,7 @@ function drawMap()
                 -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
                 -- love.graphics.draw(image, x, y)
 
-                love.graphics.setColor(255, 0, 0, 0.2)
+                love.graphics.setColor(255, 0, 255, 0.2)
                 love.graphics.rectangle("fill", x, y, 128, 128)
             end
         end
@@ -171,6 +171,7 @@ function moveCells()
 
                 if directionToMove ~= entity.lastDirection then
                     entity:move(directionToMove, deltatime)
+                    entity:infest()
                 end
 
                 entity.delaySinceLastMove = entity.delayToMove
