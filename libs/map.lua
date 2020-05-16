@@ -5,8 +5,10 @@ local lume = require "../libs/dependancies/lume"
 world = {}
 world.map = {}
 
-world.mapWidth = 64
-world.mapHeight = 64
+world.mapWidth = 32
+world.mapHeight = 32
+world.tileSizeX = 128
+world.tileSizeY = 128
 
 -- List of all the entities in the world
 world.entities = {}
@@ -30,7 +32,7 @@ for x = 1, world.mapWidth do
     for y = 1, world.mapHeight do
         local choice = lume.weightedchoice({
                 ["corrupted"] = 1,
-                ["safe"] = 20
+                ["safe"] = 30
         })
 
         if choice == "corrupted" then
