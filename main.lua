@@ -14,8 +14,8 @@ table.insert(world.entities, player)
 -- Playing, Paused, Title Screen
 local gameState = "title screen"
 local menuItems = {}
-local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
-local fontHeadings = love.graphics.newFont("assets/fonts/dpcomic.ttf", 92)
+local fontText = love.graphics.newFont("assets/fonts/04B_30__.ttf", 16)
+local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 
 local windowWidth = love.graphics.getWidth()
@@ -117,8 +117,8 @@ function drawMainMenu()
     local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
 
     -- Makes the buttons responsive to the screen size
-    local fontSize = 52 + world.tileSizeX * 0.1 -- For changes in window size
-    love.graphics.setNewFont("assets/fonts/dpcomic.ttf", fontSize)
+    local fontSize = 36 + world.tileSizeX * 0.1 -- For changes in window size
+    love.graphics.setNewFont("assets/fonts/04B_30__.ttf", fontSize)
     local buttonWidth = windowWidth * (1 / 4)
     local buttonHeight = 20 + fontSize
     
