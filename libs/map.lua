@@ -7,8 +7,8 @@ world.map = {}
 
 world.mapWidth = 32
 world.mapHeight = 32
-world.tileSizeX = 128
-world.tileSizeY = 128
+world.tileSizeX = 80 -- Manually calculated, 8x8 tiles on screen
+world.tileSizeY = 80 -- Manually calculated, 8x8 tiles on screen
 
 -- List of all the entities in the world
 world.entities = {}

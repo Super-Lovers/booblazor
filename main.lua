@@ -2,17 +2,24 @@ Object = require "../libs/dependancies/classic"
 require "libs/map"
 require "libs/entity"
 require "libs/player"
+local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
 
 -- Creates the player and puts him in the initial game position
-local player = Player(world.mapWidth / 2 * 128, world.mapHeight / 2 * 128, "player")
+local player = Player(world.mapWidth / 2 * world.tileSizeX, world.mapHeight / 2 * world.tileSizeY, "player")
 player.movementSpeed = 380
 table.insert(world.entities, player)
 
 -- Playing, Paused, Title Screen
 local gameState = "title screen"
 local menuItems = {}
+local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
+local fontHeadings = love.graphics.newFont("assets/fonts/dpcomic.ttf", 92)
+love.graphics.setFont(fontHeadings)
+
+local windowWidth = love.graphics.getWidth()
+local windowHeight = love.graphics.getHeight()
 
 function love.load()
     tick.recur(tickSpawnerDown, 1)
@@ -26,7 +33,7 @@ function love.load()
     createButton(
         0, 0, 0, 0,
         "More",
-        function() print("More") end)
+        function() state.switch("more") end)
     createButton(
         0, 0, 0, 0,
         "Quit", 
@@ -57,7 +64,7 @@ function love.update(dt)
         if love.keyboard.isScancodeDown("j") and
             player.currentFireRate <= 0 then
                 local mouseX, mouseY = love.mouse.getPosition()
-                local mousePlayerAngle = math.atan2(mouseY - 1024/2, mouseX - 1024/2)
+                local mousePlayerAngle = math.atan2(mouseY - love.windowHeight/2, mouseX - windowWidth/2)
             
                 local angleCos = math.cos(mousePlayerAngle)
                 local angleSin = math.sin(mousePlayerAngle)
@@ -72,7 +79,7 @@ function love.update(dt)
 
         moveProjectiles()
         checkProjectileCollisions()
-    elseif (gameState == "title screen") then
+    elseif (gameState ~= "playing") then
         if love.mouse.isDown(1) then
             checkMouseButtonMenuPresses()
         end
@@ -85,60 +92,58 @@ function love.draw()
     -- Re-positions the coordinate system to center to the player so
     -- that when everything elses' position changes, it will be
     -- relative to the coordinates in the translate parameters
-    love.graphics.translate(-player.x + 1024 / 2, -player.y + 1024 / 2)
+    love.graphics.translate(-player.x + windowWidth / 2, -player.y + windowHeight / 2)
 
     drawMap()
     drawEntities()
     drawSpawners()
     drawProjectiles()
 
-    -- love.graphics.print("Cos: ".. angleCos .. "Sin: " .. angleSin, player.x, player.y)
-    -- love.graphics.print(mouseX - 1024/2 .. ", " .. mouseY - 1024/2, player.x, player.y + 20)
-
     -- Resets the coordinate system to the default one if it has been
     -- changed with translations
     love.graphics.origin()
-
-    -- love.graphics.print(player.currentFireRate, 10, 0)
-    -- for i, entity in ipairs(player.projectilesFired) do
-    --     love.graphics.print(entity.x, 10, i * 20)
-    -- end
     
     if gameState == "title screen" then
         love.graphics.setColor(255, 255, 255, 1)
-        drawMenuItems()
+        drawMainMenu()
     end
 end
 
-function drawMenuItems()
-    local windowWidth = love.graphics.getWidth()
-    local windowHeight = love.graphics.getHeight()
-
+function drawMainMenu()
     -- Space to have between buttons
-    local margin = 40
+    local margin = 110
+    local topMargin = 50
+
+    local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
 
     -- Makes the buttons responsive to the screen size
-    local buttonWidth = windowWidth * (1 / 3)
-    local buttonHeight = 30
+    local fontSize = 52 + world.tileSizeX * 0.1 -- For changes in window size
+    love.graphics.setNewFont("assets/fonts/dpcomic.ttf", fontSize)
+    local buttonWidth = windowWidth * (1 / 4)
+    local buttonHeight = 20 + fontSize
+    
+    love.graphics.draw(logoTitle, 80, windowHeight * 0.4 - logoTitle:getHeight() * windowWidth / 1024 - topMargin, 0, windowWidth / 1024, windowHeight / 1024)
 
     for i, button in ipairs(menuItems) do
-        local y = i * margin + buttonHeight / 2 + windowHeight * 0.5 - buttonHeight - margin
+        local buttonY = i * margin - buttonHeight * 0.5 + 
+        windowHeight * 0.5 - buttonHeight - margin + topMargin
+        local buttonX = 80
 
-        love.graphics.rectangle(
-            "fill",
-            50,
-            y,
-            buttonWidth,
-            buttonHeight
-        )
+        -- love.graphics.rectangle(
+        --     "fill",
+        --     buttonX,
+        --     buttonY,
+        --     buttonWidth,
+        --     buttonHeight
+        -- )
 
-        button.posX = 50
-        button.posY = y
+        button.posX = buttonX
+        button.posY = buttonY
         button.sizeWidth = buttonWidth
         button.sizeHeight = buttonHeight
 
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print(button.text, 50, i * margin + buttonHeight + windowHeight * 0.5 - buttonHeight - margin)
+        -- love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.print(button.text, buttonX, buttonY + fontSize * 0.2)
         love.graphics.setColor(255, 255, 255, 1)
     end
 end
@@ -148,21 +153,21 @@ function drawMap()
     for x = 1, world.mapWidth do
         for y = 1, world.mapHeight do
             local tile = world.map[x][y]
-            local x = x * 128 - 128
-            local y = y * 128 - 128
+            local x = x * world.tileSizeX - world.tileSizeX
+            local y = y * world.tileSizeY - world.tileSizeY
 
             if tile.type == "safe" then
                 -- local image = love.graphics.newImage("assets/images/tile-safe.png")
                 -- love.graphics.draw(image, x, y)
                 love.graphics.setColor(0, 255, 0, 0.2)
-                love.graphics.rectangle("fill", x, y, 128, 128)
+                love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
             elseif tile.type == "transitioning" then
             elseif tile.type == "corrupted" then
                 -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
                 -- love.graphics.draw(image, x, y)
 
                 love.graphics.setColor(255, 0, 255, 0.2)
-                love.graphics.rectangle("fill", x, y, 128, 128)
+                love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
             end
         end
     end
@@ -176,10 +181,10 @@ function drawEntities()
             love.graphics.draw(image, entity.x, entity.y)
         elseif entity.role == "cancer cell small" then
             love.graphics.setColor(255, 255, 0, 0.7)
-            love.graphics.rectangle("fill", entity.x, entity.y, 128, 128)
+            love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
         elseif entity.role == "cancer cell big" then
             love.graphics.setColor(255, 0, 1)
-            love.graphics.rectangle("fill", entity.x, entity.y, 128, 128)
+            love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
         end
     end
 end
@@ -187,8 +192,8 @@ end
 -- TODO: Only draw the spawners in range of the player
 function drawSpawners()
     for i, spawner in pairs(world.spawners) do
-        local x = spawner.x * 128 - 128
-        local y = spawner.y * 128 - 128
+        local x = spawner.x * world.tileSizeX - world.tileSizeX
+        local y = spawner.y * world.tileSizeY - world.tileSizeY
 
         love.graphics.setColor(255, 0, 255, 0.5)
         love.graphics.rectangle("fill", x, y, 256, 256)
@@ -198,6 +203,8 @@ end
 -- Decreases the remaining seconds in the spawner's egg hatching delay until it
 -- reaches 1 to indicate its time to spawn an egg, then resets back.
 function tickSpawnerDown()
+    if (gameState ~= "playing") then return end
+
     for i, spawner in pairs(world.spawners) do
         if spawner.eggsLeft > 1 then
             if spawner.currentEggSpawnDelay > 1 then
@@ -216,6 +223,8 @@ end
 
 -- Moves any cells that are their turn to move
 function moveCells()
+    if (gameState ~= "playing") then return end
+    
     for i, entity in pairs(world.entities) do
         if entity.role == "cancer cell small" or
            entity.role == "cancer cell big" then
@@ -275,6 +284,8 @@ end
 -- Decreases the delay for corrupted tiles, so that they eventually
 -- turn green/safe again
 function tickCorruption()
+    if (gameState ~= "playing") then return end
+    
     for x = 1, world.mapWidth do
         for y = 1, world.mapHeight do
             world.map[x][y]:tickCorruption()

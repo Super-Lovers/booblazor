@@ -5,6 +5,8 @@ Entity = Object:extend()
 function Entity:new(x, y, role)
     self.x = x or 0
     self.y = y or 0
+    self.worldX = 0
+    self.worldY = 0
     self.role = role
     self.hitpoints = 100
     self.movementSpeed = 10
@@ -47,6 +49,9 @@ function Entity:move(direction, deltatime)
     elseif direction == "right" then
         self.x = self.x + self.movementSpeed * deltatime
     end
+
+    self.worldX = self.x
+    self.worldY = self.y
 end
 
 function Entity:shoot(cos, sin, angle)

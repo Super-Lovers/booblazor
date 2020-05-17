@@ -19,12 +19,12 @@ function Cell:infest()
     for x = 1, world.mapWidth do
         for y = 1, world.mapHeight do
             local tile = world.map[x][y]
-            local tileWorldX = tile.x * world.tileSizeX - 128
-            local tileWorldY = tile.y * world.tileSizeY - 128
+            local tileWorldX = tile.x * world.tileSizeX - world.tileSizeX
+            local tileWorldY = tile.y * world.tileSizeY - world.tileSizeY
 
             if tile.type == "safe" then
-                if (tileWorldX >= self.x - 128 and tileWorldX <= self.x) and
-                    (tileWorldY >= self.y - 128 and tileWorldY <= self.y) then
+                if (tileWorldX >= self.worldX and tileWorldX <= self.worldX + world.tileSizeX) and
+                    (tileWorldY >= self.worldY and tileWorldY <= self.worldY + world.tileSizeY) then
                     
                     tile.type = "corrupted"
                 end

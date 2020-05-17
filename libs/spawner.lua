@@ -20,7 +20,7 @@ function Spawner:spawn()
         ["cancer cell big"] = 1
     })
 
-    local cell = Cell(#world.entities + 1, self.worldX - 128, self.worldY - 128, cancerType)
+    local cell = Cell(#world.entities + 1, self.worldX - world.tileSizeX, self.worldY - world.tileSizeY, cancerType)
 
     if cancerType == "cancer cell small" then
         cell.hitpoints = 20
