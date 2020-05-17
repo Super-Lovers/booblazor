@@ -7,6 +7,6 @@ function love.conf(t)
     t.window.width = 640
     t.window.height = 640
     t.window.resizable = false
-    -- t.window.borderless = true -- for development only
+    t.window.borderless = true -- for development only
     t.window.fullscreen  = false -- for development only
 end

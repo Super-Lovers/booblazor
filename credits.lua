@@ -47,34 +47,13 @@ end
 function love.draw()
     love.graphics.draw(background, 0, 0, 0, love.graphics.getWidth() / 2048, love.graphics.getHeight() / 2048)
 
-    drawSection("More Information")
+    drawSection("Credits")
     drawReturnButton()
 end
 
 function drawReturnButton()
     love.graphics.print(backButton.text, backButton.posX, backButton.posY)
 end
-
--- TODO: Make the font size/word wrapping scale with window size
--- function drawSections()
---     local sectionMargin = 20
---     local headerMargin = 50
---     local wordWrapLimit = 500
---     local lastSectionHeight = 10
-
---     for i, section in ipairs(sections) do
---         love.graphics.setFont(fontHeadings, plainTextSize)
-        
---         love.graphics.printf(section.title, 80, i * sectionMargin + lastSectionHeight, wordWrapLimit)
-
---         love.graphics.setFont(fontText, headingsSize)
---         love.graphics.printf(section.content, 80, i * sectionMargin + headerMargin + lastSectionHeight, wordWrapLimit)
-
---         local width, wrappedtextLines = fontText:getWrap(section.content, wordWrapLimit)
-
---         lastSectionHeight = 34 * #wrappedtextLines
---     end
--- end
 
 function drawSection(sectionTitle)
     local headerMargin = 50

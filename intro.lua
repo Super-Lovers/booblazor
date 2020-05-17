@@ -54,6 +54,7 @@ function love.keypressed(key)
 
         elseif currentDialogueIndex == #dialogue + 1 then
             talkies.clearMessages()
+            state.switch("game")
         end
     end
 

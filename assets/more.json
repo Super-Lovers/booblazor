@@ -1,0 +1,10 @@
+[
+    {
+        "title": "More Information",
+        "content": "If you want to learn more about the topic of breast cancer, you can do some reading on the following websites:\n\nhttps://www.breastcancer.org/\nhttps://www.nhs.uk/conditions/breast-cancer/\nhttps://www.bcrf.org/\nshorturl.at/rxN46"
+    },
+    {
+        "title": "Credits",
+        "content": "This game was created for the online BooBJAM2020 to spread awareness in the research for fighting against breast cancer. The following sources were used for audio assets:\n\nhttps://www.bfxr.net/\nhttps://soundimage.org/\n\nThe game was created by Roger Recaldini (Artist) and Nikolay Ivanov (Programmer) with Love2d and Lua"
+    }
+]
