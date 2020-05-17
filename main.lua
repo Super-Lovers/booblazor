@@ -17,6 +17,7 @@ local menuItems = {}
 local fontText = love.graphics.newFont("assets/fonts/04B_30__.ttf", 16)
 local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
+local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
 
 local windowWidth = love.graphics.getWidth()
 local windowHeight = love.graphics.getHeight()
@@ -29,7 +30,7 @@ function love.load()
     createButton(
         0, 0, 0, 0,
         "Play",
-        function() print("Play") end)
+        function() state.switch("intro") end)
     createButton(
         0, 0, 0, 0,
         "More",
@@ -114,8 +115,6 @@ function drawMainMenu()
     local margin = 110
     local topMargin = 50
 
-    local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
-
     -- Makes the buttons responsive to the screen size
     local fontSize = 36 + world.tileSizeX * 0.1 -- For changes in window size
     love.graphics.setNewFont("assets/fonts/04B_30__.ttf", fontSize)
@@ -129,20 +128,20 @@ function drawMainMenu()
         windowHeight * 0.5 - buttonHeight - margin + topMargin
         local buttonX = 80
 
-        -- love.graphics.rectangle(
-        --     "fill",
-        --     buttonX,
-        --     buttonY,
-        --     buttonWidth,
-        --     buttonHeight
-        -- )
+        love.graphics.rectangle(
+            "fill",
+            buttonX,
+            buttonY,
+            buttonWidth,
+            buttonHeight
+        )
 
         button.posX = buttonX
         button.posY = buttonY
         button.sizeWidth = buttonWidth
         button.sizeHeight = buttonHeight
 
-        -- love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(button.text, buttonX, buttonY + fontSize * 0.2)
         love.graphics.setColor(255, 255, 255, 1)
     end
