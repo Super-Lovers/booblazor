@@ -11,22 +11,30 @@ player.movementSpeed = 380
 table.insert(world.entities, player)
 
 -- Playing, Paused, Title Screen
-local gameState = "playing"
+local gameState = "title screen"
+local menuItems = {}
 
 function love.load()
     tick.recur(tickSpawnerDown, 1)
     tick.recur(moveCells, 0.05)
     tick.recur(tickCorruption, 1)
+
+    createButton(
+        0, 0, 0, 0,
+        "Play",
+        function() print("Play") end)
+    createButton(
+        0, 0, 0, 0,
+        "More",
+        function() print("More") end)
+    createButton(
+        0, 0, 0, 0,
+        "Quit", 
+        function() love.event.quit(0) end)
 end
 
 function love.update(dt)
     tick.update(dt)
-    
-    local mouseX, mouseY = love.mouse.getPosition()
-    local mousePlayerAngle = math.atan2(mouseY - 1024/2, mouseX - 1024/2)
-
-    local angleCos = math.cos(mousePlayerAngle)
-    local angleSin = math.sin(mousePlayerAngle)
 
     if (gameState == "playing") then
         if love.keyboard.isScancodeDown("w") then
@@ -48,6 +56,12 @@ function love.update(dt)
 
         if love.keyboard.isScancodeDown("j") and
             player.currentFireRate <= 0 then
+                local mouseX, mouseY = love.mouse.getPosition()
+                local mousePlayerAngle = math.atan2(mouseY - 1024/2, mouseX - 1024/2)
+            
+                local angleCos = math.cos(mousePlayerAngle)
+                local angleSin = math.sin(mousePlayerAngle)
+
                 player:shoot(angleCos, angleSin, mousePlayerAngle)
                 player.currentFireRate = player.fireRate
         end
@@ -58,7 +72,10 @@ function love.update(dt)
 
         moveProjectiles()
         checkProjectileCollisions()
-    elseif (gameState == "paused") then
+    elseif (gameState == "title screen") then
+        if love.mouse.isDown(1) then
+            checkMouseButtonMenuPresses()
+        end
     end
 
     deltatime = dt
@@ -86,6 +103,44 @@ function love.draw()
     -- for i, entity in ipairs(player.projectilesFired) do
     --     love.graphics.print(entity.x, 10, i * 20)
     -- end
+    
+    if gameState == "title screen" then
+        love.graphics.setColor(255, 255, 255, 1)
+        drawMenuItems()
+    end
+end
+
+function drawMenuItems()
+    local windowWidth = love.graphics.getWidth()
+    local windowHeight = love.graphics.getHeight()
+
+    -- Space to have between buttons
+    local margin = 40
+
+    -- Makes the buttons responsive to the screen size
+    local buttonWidth = windowWidth * (1 / 3)
+    local buttonHeight = 30
+
+    for i, button in ipairs(menuItems) do
+        local y = i * margin + buttonHeight / 2 + windowHeight * 0.5 - buttonHeight - margin
+
+        love.graphics.rectangle(
+            "fill",
+            50,
+            y,
+            buttonWidth,
+            buttonHeight
+        )
+
+        button.posX = 50
+        button.posY = y
+        button.sizeWidth = buttonWidth
+        button.sizeHeight = buttonHeight
+
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.print(button.text, 50, i * margin + buttonHeight + windowHeight * 0.5 - buttonHeight - margin)
+        love.graphics.setColor(255, 255, 255, 1)
+    end
 end
 
 -- TODO: Only draw the tiles in range of the player
@@ -225,4 +280,30 @@ function tickCorruption()
             world.map[x][y]:tickCorruption()
         end
     end    
+end
+
+-- Template for creating a button with an event
+function createButton(x, y, width, height, text, event)
+    local button = {
+        posX = x,
+        posY = y,
+        sizeWidth = width,
+        sizeHeight = height,
+        text = text,
+        event = event
+    }
+
+    table.insert(menuItems, button)
+end
+
+-- Presses a button if the user clicks on one with the mouse
+function checkMouseButtonMenuPresses()
+    local mouseX, mouseY = love.mouse.getPosition()
+
+    for i, button in ipairs(menuItems) do
+        if (mouseX >= button.posX and mouseX <= button.posX + button.sizeWidth) and
+        (mouseY >= button.posY and mouseY <= button.posY + button.sizeHeight) then
+            button.event()
+        end
+    end
 end
