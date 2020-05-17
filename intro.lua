@@ -9,7 +9,7 @@ local dialogueBox = love.graphics.newImage("assets/images/dialogue_box.png")
 
 local dialogue = {}
 local currentDialogueIndex = 1
-talkies.font = love.graphics.newFont("assets/fonts/dpcomic.ttf", 36)
+talkies.font = love.graphics.newFont("assets/fonts/dpcomic.ttf", 32)
 talkies.textSpeed = "fast"
 talkies.padding = 15
 local isMessageLoading = true
