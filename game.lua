@@ -165,19 +165,21 @@ function drawMap()
             local tile = world.map[x][y]
             local x = x * world.tileSizeX - world.tileSizeX
             local y = y * world.tileSizeY - world.tileSizeY
-
-            if tile.type == "safe" then
-                -- local image = love.graphics.newImage("assets/images/tile-safe.png")
-                -- love.graphics.draw(image, x, y)
-                love.graphics.setColor(0, 255, 0, 0.2)
-                love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
-            elseif tile.type == "transitioning" then
-            elseif tile.type == "corrupted" then
-                -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
-                -- love.graphics.draw(image, x, y)
-
-                love.graphics.setColor(255, 0, 255, 0.2)
-                love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
+            
+            if isObjectVisibleInCamera(tile) == true then
+                if tile.type == "safe" then
+                    -- local image = love.graphics.newImage("assets/images/tile-safe.png")
+                    -- love.graphics.draw(image, x, y)
+                    love.graphics.setColor(0, 255, 0, 0.2)
+                    love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
+                elseif tile.type == "transitioning" then
+                elseif tile.type == "corrupted" then
+                    -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
+                    -- love.graphics.draw(image, x, y)
+    
+                    love.graphics.setColor(255, 0, 255, 0.2)
+                    love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
+                end
             end
         end
     end
@@ -186,15 +188,17 @@ end
 -- TODO: Only draw the entities in range of the player
 function drawEntities()
     for i, entity in pairs(world.entities) do
-        if entity.role == "player" then
-            local image = love.graphics.newImage("assets/images/player.png")
-            love.graphics.draw(image, entity.x, entity.y)
-        elseif entity.role == "cancer cell small" then
-            love.graphics.setColor(255, 255, 0, 0.7)
-            love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
-        elseif entity.role == "cancer cell big" then
-            love.graphics.setColor(255, 0, 1)
-            love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
+        if isObjectVisibleInCamera(entity) == true then
+            if entity.role == "player" then
+                local image = love.graphics.newImage("assets/images/player.png")
+                love.graphics.draw(image, entity.x, entity.y)
+            elseif entity.role == "cancer cell small" then
+                love.graphics.setColor(255, 255, 0, 0.7)
+                love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
+            elseif entity.role == "cancer cell big" then
+                love.graphics.setColor(255, 0, 1)
+                love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
+            end
         end
     end
 end
@@ -202,11 +206,13 @@ end
 -- TODO: Only draw the spawners in range of the player
 function drawSpawners()
     for i, spawner in pairs(world.spawners) do
-        local x = spawner.x * world.tileSizeX - world.tileSizeX
-        local y = spawner.y * world.tileSizeY - world.tileSizeY
-
-        love.graphics.setColor(255, 0, 255, 0.5)
-        love.graphics.rectangle("fill", x, y, 256, 256)
+        if isObjectVisibleInCamera(spawner) then
+            local x = spawner.x * world.tileSizeX - world.tileSizeX
+            local y = spawner.y * world.tileSizeY - world.tileSizeY
+    
+            love.graphics.setColor(255, 0, 255, 0.5)
+            love.graphics.rectangle("fill", x, y, 256, 256)
+        end
     end
 end
 
@@ -259,11 +265,13 @@ function drawProjectiles()
     for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
-                local image = love.graphics.newImage("assets/images/laser_projectile.png")
-
-                local drawable = love.graphics.draw(image, projectile.x, projectile.y, projectile.angle, 1, 1, 2, 28)
-                
-                projectile.drawable = drawable
+                if isObjectVisibleInCamera(projectile) then
+                    local image = love.graphics.newImage("assets/images/laser_projectile.png")
+    
+                    local drawable = love.graphics.draw(image, projectile.x, projectile.y, projectile.angle, 1, 1, 2, 28)
+                    
+                    projectile.drawable = drawable
+                end
             end
         end
     end
@@ -327,4 +335,29 @@ function checkMouseButtonMenuPresses()
             button.event()
         end
     end
+end
+
+-- Uses the world positions of both objects to check if they collide
+function doObjectsCollide(objectOne, objectTwo)
+    if (objectOne.worldX >= objectTwo.worldX and objectOne.worldX <= objectTwo.worldX + world.tileSizeX) and
+        (objectOne.worldY >= objectTwo.worldY and objectOne.worldY <= objectTwo.worldY + world.tileSizeY) then
+        return true
+    end
+
+    return false
+end
+
+-- Uses the world position of an object to determine whether or not it is inside the camera's field of view
+function isObjectVisibleInCamera(object)
+    local cameraLeftBoundary = player.worldX - love.graphics.getWidth() * 0.5
+    local cameraRightBoundary = player.worldX + love.graphics.getWidth() * 0.5
+    local cameraTopBoundary = player.worldY - love.graphics.getHeight() * 0.5
+    local cameraBottomBoundary = player.worldY + love.graphics.getHeight() * 0.5
+
+    if (object.worldX >= cameraLeftBoundary - world.tileSizeX * 2 and object.worldX <= cameraRightBoundary + world.tileSizeX) and
+    (object.worldY >= cameraTopBoundary - world.tileSizeY * 2 and object.worldY <= cameraBottomBoundary + world.tileSizeY) then
+        return true
+    end
+
+    return false
 end

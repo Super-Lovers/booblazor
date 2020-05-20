@@ -23,6 +23,8 @@ end
 for x = 1, world.mapWidth do
     for y = 1, world.mapHeight do
         local tile = Tile(x, y, "safe")
+        tile.worldX = x * world.tileSizeX
+        tile.worldY = y * world.tileSizeY
         world.map[x][y] = tile
     end
 end

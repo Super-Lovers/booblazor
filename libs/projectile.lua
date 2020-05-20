@@ -5,6 +5,8 @@ function Projectile:new(id, entity, x, y, cos, sin, angle)
     self.id = id
     self.x = x or 0
     self.y = y or 0
+    self.worldX = 0
+    self.worldY = 0
     self.cos = cos or 0
     self.sin = sin or 0
     self.angle = angle or 0
@@ -30,6 +32,9 @@ function Projectile:push(dt)
     if self.x > world.mapWidth * world.tileSizeX then self:destroy() end
     if self.y < 0 then self:destroy() end
     if self.y > world.mapHeight * world.tileSizeY then self:destroy() end
+
+    self.worldX = self.x
+    self.worldY = self.y
 end
 
 function Projectile:checkCollisions()
