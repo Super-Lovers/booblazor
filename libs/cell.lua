@@ -1,4 +1,5 @@
 require "../libs/entity"
+require "../audio-setup"
 local lume = require "../libs/dependancies/lume"
 Cell = Entity:extend()
 
@@ -47,9 +48,7 @@ function Cell:getDirection()
 end
 
 function Cell:takeDamage(damage)
-    if self.hitpoints - damage <= 0 then
-        self:destroy()
-    elseif self.hitpoints - damage > 0 then
-        self.hitpoints = self.hitpoints - damage
-    end
+    Cell.super.takeDamage(self, damage)
+    
+    hitEnemy:play()
 end

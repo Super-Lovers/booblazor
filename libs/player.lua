@@ -1,5 +1,6 @@
 require "../libs/entity"
 require "../libs/projectile"
+require "../audio-setup"
 Player = Entity:extend()
 
 function Player:new(x, y, role)
@@ -8,4 +9,10 @@ function Player:new(x, y, role)
     self.fireRate = 10
     self.fireRateDecay = 80
     self.currentFireRate = self.fireRate
+end
+
+function Player:takeDamage(damage)
+    Player.super.takeDamage(self, damage)
+    
+    hitPlayer:play();
 end

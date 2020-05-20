@@ -1,3 +1,4 @@
+require "../audio-setup"
 Projectile = Object:extend()
 
 -- Direction is required for rotating the bullet
@@ -14,6 +15,8 @@ function Projectile:new(id, entity, x, y, cos, sin, angle)
     self.entity = entity
     self.speed = 500
     self.attackDamage = 20
+
+    shootLaser:play()
 end
 
 -- Deleted this projectile and its references (on impact)

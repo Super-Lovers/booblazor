@@ -59,3 +59,11 @@ function Entity:shoot(cos, sin, angle)
 
     table.insert(self.projectilesFired, projectile)
 end
+
+function Entity:takeDamage(damage)
+    if self.hitpoints - damage <= 0 then
+        self:destroy()
+    elseif self.hitpoints - damage > 0 then
+        self.hitpoints = self.hitpoints - damage
+    end
+end

@@ -1,10 +1,13 @@
-Object = require "../libs/dependancies/classic"
+local slam = require "libs/dependancies/slam"
 require "libs/map"
 require "libs/entity"
 require "libs/player"
 local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
+
+local windowWidth = love.graphics.getWidth()
+local windowHeight = love.graphics.getHeight()
 
 -- Creates the player and puts him in the initial game position
 local player = Player(world.mapWidth / 2 * world.tileSizeX, world.mapHeight / 2 * world.tileSizeY, "player")
@@ -19,10 +22,22 @@ local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
 
-local windowWidth = love.graphics.getWidth()
-local windowHeight = love.graphics.getHeight()
+-- local tilesetImage = love.graphics.newImage("/assets/images/tilesbatch.png")
+-- tilesetImage:setFilter("nearest", "linear")
+
+-- local tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, (windowWidth / world.tileSizeX + 2) * windowHeight / world.tileSizeY + 2)
+
+-- local tileQuads = {}
+-- -- tile safe
+-- tileQuads[0] = love.graphics.newQuad(0, 0, world.tileSizeX, world.tileSizeX)
+-- -- tile transitioning
+-- tileQuads[1] = love.graphics.newQuad(world.tileSizeX, 0, world.tileSizeX, world.tileSizeX)
+-- -- tile corrupted
+-- tileQuads[2] = love.graphics.newQuad(2 * world.tileSizeX, 0, world.tileSizeX, world.tileSizeX)
 
 local isGameLoaded = false;
+
+actionBackgroundMusicController:play()
 
 function love.update(dt)
     tick.update(dt)
@@ -40,7 +55,10 @@ function love.update(dt)
         createButton(
             0, 0, 0, 0,
             "Main Menu", 
-            function() state.switch("main;backFromGame") end)
+            function()
+                actionBackgroundMusicController:stop()
+                state.switch("main;backFromGame") 
+            end)
         isGameLoaded = true
     end
 
@@ -160,6 +178,8 @@ end
 
 -- TODO: Only draw the tiles in range of the player
 function drawMap()
+    love.graphics.setColor(255, 255, 255, 1)
+
     for x = 1, world.mapWidth do
         for y = 1, world.mapHeight do
             local tile = world.map[x][y]
@@ -169,16 +189,19 @@ function drawMap()
             if isObjectVisibleInCamera(tile) == true then
                 if tile.type == "safe" then
                     -- local image = love.graphics.newImage("assets/images/tile-safe.png")
-                    -- love.graphics.draw(image, x, y)
-                    love.graphics.setColor(0, 255, 0, 0.2)
-                    love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
+                    
+                    -- local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
+                    -- love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 elseif tile.type == "transitioning" then
+                    local image = love.graphics.newImage("assets/images/tile-transitioning.png")
+                    
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
+                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 elseif tile.type == "corrupted" then
-                    -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
-                    -- love.graphics.draw(image, x, y)
-    
-                    love.graphics.setColor(255, 0, 255, 0.2)
-                    love.graphics.rectangle("fill", x, y, world.tileSizeX, world.tileSizeY)
+                    local image = love.graphics.newImage("assets/images/tile-corrupted.png")
+                    
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
+                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 end
             end
         end
@@ -360,4 +383,10 @@ function isObjectVisibleInCamera(object)
     end
 
     return false
+end
+
+function getImageScaleFromNewDimensions(image, newWidth, newHeight)
+    local currentWidth, currentHeight = image:getDimensions()
+
+    return newWidth / currentWidth, newHeight / currentHeight
 end

@@ -12,6 +12,7 @@ local currentDialogueIndex = 1
 talkies.font = love.graphics.newFont("assets/fonts/dpcomic.ttf", 32)
 talkies.textSpeed = "fast"
 talkies.padding = 15
+talkies.talkSound = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
 local isMessageLoading = true
 
 function loadDialogueLines()

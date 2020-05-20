@@ -1,3 +1,5 @@
+Object = require "../libs/dependancies/classic"
+local audioSetup = require "audio-setup"
 local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 
@@ -13,6 +15,8 @@ local windowHeight = love.graphics.getHeight()
 
 local isGameLoaded = false
 local stopClicksFromStateTransition = false
+
+mainMenuBackgroundMusicController:play()
 
 -- Template for creating a button with an event
 function createButton(x, y, width, height, text, event)
@@ -36,7 +40,10 @@ if passvar[1] == "backFromGame" then
         createButton(
             0, 0, 0, 0,
             "Play",
-            function() state.switch("game") end)
+            function() 
+                mainMenuBackgroundMusicController:stop()
+                state.switch("intro")
+            end)
         createButton(
             0, 0, 0, 0,
             "More",
@@ -59,7 +66,10 @@ function love.load()
     createButton(
         0, 0, 0, 0,
         "Play",
-        function() state.switch("game") end)
+        function()
+            mainMenuBackgroundMusicController:stop()
+            state.switch("intro")
+        end)
     createButton(
         0, 0, 0, 0,
         "More",
