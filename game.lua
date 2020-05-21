@@ -10,7 +10,7 @@ local windowWidth = love.graphics.getWidth()
 local windowHeight = love.graphics.getHeight()
 
 -- Creates the player and puts him in the initial game position
-local player = Player(world.mapWidth / 2 * world.tileSizeX, world.mapHeight / 2 * world.tileSizeY, "player")
+player = Player(world.mapWidth / 2 * world.tileSizeX, world.mapHeight / 2 * world.tileSizeY, "player")
 player.movementSpeed = 380
 table.insert(world.entities, player)
 

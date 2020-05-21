@@ -7,6 +7,8 @@ function Entity:new(x, y, role)
     self.y = y or 0
     self.worldX = 0
     self.worldY = 0
+    self.tileX = 0
+    self.tileY = 0
     self.role = role
     self.hitpoints = 100
     self.movementSpeed = 10
@@ -52,6 +54,9 @@ function Entity:move(direction, deltatime)
 
     self.worldX = self.x
     self.worldY = self.y
+
+    self.tileX = math.ceil((self.worldX / world.tileSizeX) + 0.5)
+    self.tileY = math.ceil((self.worldY / world.tileSizeY) + 0.5)
 end
 
 function Entity:shoot(cos, sin, angle)

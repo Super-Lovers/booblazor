@@ -10,6 +10,7 @@ function Cell:new(id, x, y, role)
     self.delayToMove = math.random(7) + 3
     self.delaySinceLastMove = self.delayToMove
     self.nextDirection = "up"
+    self.isPlayerInProximity = false
 end
 
 function Cell:destroy()
@@ -34,6 +35,14 @@ function Cell:infest()
     end
 end
 
+function Cell:move(direction, deltatime)
+    if self.isPlayerInProximity == false then
+        Cell.super.move(self, direction, deltatime)
+    end
+
+    self:setIsPlayerInProximity()
+end
+
 -- Gets a random direction to go to in the next move
 function Cell:getDirection()
     local choiceOfDirection = lume.weightedchoice({
@@ -49,6 +58,23 @@ end
 
 function Cell:takeDamage(damage)
     Cell.super.takeDamage(self, damage)
-    
+
     hitEnemy:play()
+end
+
+function Cell:setIsPlayerInProximity()
+    if player ~= nil then
+        local leftBoundary = self.worldX - love.graphics.getWidth() / 4
+        local rightBoundary = self.worldX + love.graphics.getWidth() / 4
+        local topBoundary = self.worldY - love.graphics.getHeight() / 4
+        local bottomBoundary = self.worldY + love.graphics.getHeight() / 4
+
+        self.isPlayerInProximity = false;
+
+        if (player.worldX >= leftBoundary and player.worldX <= rightBoundary) and
+            (player.worldY >= topBoundary and player.worldY <= bottomBoundary) then
+
+            self.isPlayerInProximity = true;
+        end
+    end
 end

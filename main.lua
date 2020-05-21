@@ -42,7 +42,7 @@ if passvar[1] == "backFromGame" then
             "Play",
             function() 
                 mainMenuBackgroundMusicController:stop()
-                state.switch("intro")
+                state.switch("game")
             end)
         createButton(
             0, 0, 0, 0,
@@ -68,7 +68,7 @@ function love.load()
         "Play",
         function()
             mainMenuBackgroundMusicController:stop()
-            state.switch("intro")
+            state.switch("game")
         end)
     createButton(
         0, 0, 0, 0,
