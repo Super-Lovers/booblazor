@@ -415,10 +415,18 @@ function drawInfectionBar()
     local barPositionX = love.graphics.getWidth() * 0.5 - barWidth * 0.5
     local barPositionY = 50
 
+    -- Draws both layers for the bar
     love.graphics.setColor(255, 255, 255, 1)
     love.graphics.rectangle("fill", barPositionX, barPositionY, barWidth, 40)
     love.graphics.setColor(255, 0, 0, 1)
     love.graphics.rectangle("fill", barPositionX, barPositionY, infectionBarWidth, 40)
     
+    -- Draws the percentage label
+    love.graphics.setColor(0, 255, 0, 1)
+    love.graphics.setFont(fontText, 8)
+
+    local infectionLabel = infectionPercent .. "%"
+    love.graphics.print(infectionLabel, love.graphics.getWidth() * 0.5, barPositionY + 13)
+
     love.graphics.setColor(255, 255, 255, 1)
 end
