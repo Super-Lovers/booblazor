@@ -44,10 +44,12 @@ function Projectile:checkCollisions()
     for i, entity in pairs(world.entities) do
         if entity.role == "cancer cell small" or
            entity.role == "cancer cell big" then
+            
+            if (self.worldX + 29 > entity.worldX and -- Left border
+            self.worldX < entity.worldX + world.tileSizeX and -- Left border
+            self.worldY + 4 > entity.worldY and -- Top border
+            self.worldY < entity.worldY + world.tileSizeY) then -- Bottom border
 
-            if (entity.x >= self.x - world.tileSizeX and entity.x <= self.x) and
-                (entity.y >= self.y - world.tileSizeY and entity.y <= self.y) then
-                
                 entity:takeDamage(self.attackDamage)
                 self:destroy()
             end

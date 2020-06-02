@@ -191,10 +191,10 @@ function drawMap()
             
             if isObjectVisibleInCamera(tile) == true then
                 if tile.type == "safe" then
-                    -- local image = love.graphics.newImage("assets/images/tile-safe.png")
+                    local image = love.graphics.newImage("assets/images/tile-safe.png")
                     
-                    -- local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
-                    -- love.graphics.draw(image, x, y, 0, scaleX, scaleY)
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
+                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 elseif tile.type == "transitioning" then
                     local image = love.graphics.newImage("assets/images/tile-transitioning.png")
                     

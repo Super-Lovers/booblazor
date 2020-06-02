@@ -39,9 +39,11 @@ function Cell:infest()
             local tileWorldY = tile.y * world.tileSizeY - world.tileSizeY
 
             if tile.type == "safe" then
-                if (tileWorldX >= self.worldX and tileWorldX <= self.worldX + world.tileSizeX) and
-                    (tileWorldY >= self.worldY and tileWorldY <= self.worldY + world.tileSizeY) then
-                    
+                if (self.worldX + world.tileSizeX > tileWorldX and -- Left border
+                    self.worldX < tileWorldX + world.tileSizeX and -- Left border
+                    self.worldY + world.tileSizeY > tileWorldY and -- Top border
+                    self.worldY < tileWorldY + world.tileSizeY) then -- Bottom border
+
                     tile.type = "corrupted"
                 end
             end
