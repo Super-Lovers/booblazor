@@ -23,8 +23,8 @@ function Entity:moveInDirection(direction, deltatime)
 
     -- ==============================
     -- Stops the entitiy from exiting the game borders
-    local rightBorder = world.mapWidth * world.tileSizeX - world.tileSizeX / 2
-    local topBorder = world.mapHeight * world.tileSizeY - world.tileSizeX / 2
+    local rightBorder = world.mapWidth * world.tileSizeX - world.tileSizeX * 0.5
+    local topBorder = world.mapHeight * world.tileSizeY - world.tileSizeX * 0.5
 
     if self.y < 0 then
         self.y = 0

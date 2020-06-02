@@ -10,7 +10,7 @@ local windowWidth = love.graphics.getWidth()
 local windowHeight = love.graphics.getHeight()
 
 -- Creates the player and puts him in the initial game position
-player = Player(world.mapWidth / 2 * world.tileSizeX, world.mapHeight / 2 * world.tileSizeY, "player")
+player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
 table.insert(world.entities, player)
 
@@ -125,7 +125,7 @@ function love.draw()
     -- Re-positions the coordinate system to center to the player so
     -- that when everything elses' position changes, it will be
     -- relative to the coordinates in the translate parameters
-    love.graphics.translate(-player.x + windowWidth / 2, -player.y + windowHeight / 2)
+    love.graphics.translate(-player.x + windowWidth * 0.5, -player.y + windowHeight * 0.5)
 
     drawMap()
     drawEntities()
@@ -135,6 +135,8 @@ function love.draw()
     -- Resets the coordinate system to the default one if it has been
     -- changed with translations
     love.graphics.origin()
+
+    drawInfectionBar()
     
     if gameState == "title screen" then
         love.graphics.setColor(255, 255, 255, 1)
@@ -392,4 +394,31 @@ function getImageScaleFromNewDimensions(image, newWidth, newHeight)
     local currentWidth, currentHeight = image:getDimensions()
 
     return newWidth / currentWidth, newHeight / currentHeight
+end
+
+function drawInfectionBar()
+    local barWidth = love.graphics.getWidth() * 0.5
+
+    local maxTiles = world.mapWidth * world.mapHeight
+    local infectedTiles = 0
+    for x = 1, world.mapWidth do
+        for y = 1, world.mapHeight do
+            if world.map[x][y].type == "corrupted" then
+                infectedTiles = infectedTiles + 1
+            end
+        end
+    end  
+
+    local infectionPercent = math.floor((infectedTiles / maxTiles) * 100)
+    local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
+
+    local barPositionX = love.graphics.getWidth() * 0.5 - barWidth * 0.5
+    local barPositionY = 50
+
+    love.graphics.setColor(255, 255, 255, 1)
+    love.graphics.rectangle("fill", barPositionX, barPositionY, barWidth, 40)
+    love.graphics.setColor(255, 0, 0, 1)
+    love.graphics.rectangle("fill", barPositionX, barPositionY, infectionBarWidth, 40)
+    
+    love.graphics.setColor(255, 255, 255, 1)
 end
