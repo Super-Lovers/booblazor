@@ -64,20 +64,23 @@ function love.update(dt)
 
     if gameState == "playing" then
         love.graphics.clear()
+
+        -- moveCells()
+
         if love.keyboard.isScancodeDown("w") then
-             player:move("up", dt)
+             player:moveInDirection("up", dt)
              player.lookingDirection = "up"
         end
         if love.keyboard.isScancodeDown("s") then
-            player:move("down", dt)
+            player:moveInDirection("down", dt)
             player.lookingDirection = "down"
         end
         if love.keyboard.isScancodeDown("a") then
-            player:move("left", dt)
+            player:moveInDirection("left", dt)
             player.lookingDirection = "left"
         end
         if love.keyboard.isScancodeDown("d") then
-            player:move("right", dt)
+            player:moveInDirection("right", dt)
             player.lookingDirection = "right"
         end
 
@@ -198,10 +201,10 @@ function drawMap()
                     local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
                     love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 elseif tile.type == "corrupted" then
-                    local image = love.graphics.newImage("assets/images/tile-corrupted.png")
+                    -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
                     
-                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
-                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
+                    -- local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
+                    -- love.graphics.draw(image, x, y, 0, scaleX, scaleY)
                 end
             end
         end

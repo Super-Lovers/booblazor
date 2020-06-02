@@ -1,4 +1,5 @@
 require "../libs/projectile"
+local lume = require "../libs/dependancies/lume"
 Entity = Object:extend()
 
 -- Role is the type of entity it is (Player, Cancer cell)
@@ -11,13 +12,13 @@ function Entity:new(x, y, role)
     self.tileY = 0
     self.role = role
     self.hitpoints = 100
-    self.movementSpeed = 10
+    self.movementSpeed = 100
     self.lastDirection = "up"
     self.lookingDirection = "up"
     self.projectilesFired = {}
 end
 
-function Entity:move(direction, deltatime)
+function Entity:moveInDirection(direction, deltatime)
     self.lastDirection = direction
 
     -- ==============================
@@ -57,6 +58,27 @@ function Entity:move(direction, deltatime)
 
     self.tileX = math.ceil((self.worldX / world.tileSizeX) + 0.5)
     self.tileY = math.ceil((self.worldY / world.tileSizeY) + 0.5)
+end
+
+function Entity:moveTowards(entity, deltatime)
+    if self.worldX < entity.worldX then 
+        self.x = self.worldX + (self.movementSpeed * deltatime)
+    end
+    
+    if self.worldX > entity.worldX then
+        self.x = self.worldX - (self.movementSpeed * deltatime)
+    end
+    
+    if self.worldY < entity.worldY then 
+        self.y = self.worldY + (self.movementSpeed * deltatime)
+    end
+    
+    if self.worldY > entity.worldY then
+        self.y = self.worldY - (self.movementSpeed * deltatime)
+    end
+
+    self.worldX = self.x
+    self.worldY = self.y
 end
 
 function Entity:shoot(cos, sin, angle)

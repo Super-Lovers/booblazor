@@ -4,6 +4,12 @@ local lume = require "../libs/dependancies/lume"
 
 world = {}
 world.map = {}
+-- The same grid as the map, but uses numbers to indicate tiles on each cell
+-- It is meant for easier implementation of the pathfinder algorithm
+world.numberGrid = {}
+-- 0 = safe
+-- 1 = corrupted
+-- 2 = transitioning
 
 world.mapWidth = 32
 world.mapHeight = 32
@@ -17,6 +23,7 @@ world.spawners = {}
 -- Setting the number of rows in the map table
 for x = 1, world.mapWidth do
     world.map[x] = {}
+    world.numberGrid[x] = {}
 end
 
 -- Setting the default map tile
@@ -26,6 +33,7 @@ for x = 1, world.mapWidth do
         tile.worldX = x * world.tileSizeX
         tile.worldY = y * world.tileSizeY
         world.map[x][y] = tile
+        world.numberGrid[x][y] = 0
     end
 end
 
@@ -34,7 +42,7 @@ for x = 1, world.mapWidth do
     for y = 1, world.mapHeight do
         local choice = lume.weightedchoice({
                 ["corrupted"] = 1,
-                ["safe"] = 30
+                ["safe"] = 70
         })
 
         if choice == "corrupted" then

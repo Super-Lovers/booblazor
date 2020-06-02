@@ -3,6 +3,10 @@ require "../audio-setup"
 local lume = require "../libs/dependancies/lume"
 Cell = Entity:extend()
 
+local grid
+local walkableTile
+local myFinder
+
 function Cell:new(id, x, y, role)
     Cell.super.new(self, x, y, role)
 
@@ -15,6 +19,16 @@ end
 
 function Cell:destroy()
     world.entities[self.id] = nil
+end
+
+function Entity:move(direction, deltatime)
+    if self.isPlayerInProximity == false then
+        Cell.super.moveInDirection(self, direction, deltatime)
+    elseif self.isPlayerInProximity == true then
+        Cell.super.moveTowards(self, player, deltatime)
+    end
+
+    self:setIsPlayerInProximity()
 end
 
 function Cell:infest()
@@ -33,14 +47,6 @@ function Cell:infest()
             end
         end
     end
-end
-
-function Cell:move(direction, deltatime)
-    if self.isPlayerInProximity == false then
-        Cell.super.move(self, direction, deltatime)
-    end
-
-    self:setIsPlayerInProximity()
 end
 
 -- Gets a random direction to go to in the next move
@@ -64,16 +70,11 @@ end
 
 function Cell:setIsPlayerInProximity()
     if player ~= nil then
-        local leftBoundary = self.worldX - love.graphics.getWidth() / 4
-        local rightBoundary = self.worldX + love.graphics.getWidth() / 4
-        local topBoundary = self.worldY - love.graphics.getHeight() / 4
-        local bottomBoundary = self.worldY + love.graphics.getHeight() / 4
+        local distanceToPlayer = math.abs(lume.distance(player.worldX, player.worldY, self.worldX, self.worldY)); 
 
         self.isPlayerInProximity = false;
 
-        if (player.worldX >= leftBoundary and player.worldX <= rightBoundary) and
-            (player.worldY >= topBoundary and player.worldY <= bottomBoundary) then
-
+        if (distanceToPlayer < 300) then
             self.isPlayerInProximity = true;
         end
     end

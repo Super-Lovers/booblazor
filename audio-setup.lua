@@ -1,6 +1,6 @@
 require "libs/audioController"
 
-volume = 0.1
+volume = 0
 
 -- Sound effects
 hitPlayer = love.audio.newSource("assets/sounds/hit_player.wav", "static")
