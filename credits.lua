@@ -21,7 +21,7 @@ local backButton = {
     event = function() state.switch("main;backFromGame") end
 }
 
-backButton.posX = backButton.posX - backButton.sizeWidth / 2
+backButton.posX = backButton.posX - backButton.sizeWidth * 0.5
 backButton.posY = backButton.posY - backButton.sizeHeight
 
 function loadPageSections()

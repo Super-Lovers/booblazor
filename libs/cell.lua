@@ -15,6 +15,9 @@ function Cell:new(id, x, y, role)
     self.delaySinceLastMove = self.delayToMove
     self.nextDirection = "up"
     self.isPlayerInProximity = false
+    self.sprites = {}
+    self.atlas = {}
+    self.currentSprite = nil
 end
 
 function Cell:destroy()
@@ -76,7 +79,7 @@ function Cell:setIsPlayerInProximity()
 
         self.isPlayerInProximity = false;
 
-        if (distanceToPlayer < 300) then
+        if (distanceToPlayer < 400) then
             self.isPlayerInProximity = true;
         end
     end

@@ -13,12 +13,13 @@ world.numberGrid = {}
 
 world.mapWidth = 32
 world.mapHeight = 32
-world.tileSizeX = 80 -- Manually calculated, 8x8 tiles on screen
-world.tileSizeY = 80 -- Manually calculated, 8x8 tiles on screen
+world.tileSizeX = 128 -- Manually calculated, 8x8 tiles on screen
+world.tileSizeY = 128 -- Manually calculated, 8x8 tiles on screen
 
 -- List of all the entities in the world
 world.entities = {}
 world.spawners = {}
+
 
 -- Setting the number of rows in the map table
 for x = 1, world.mapWidth do
@@ -46,7 +47,7 @@ for x = 1, world.mapWidth do
         })
 
         if choice == "corrupted" then
-            local tile = Tile(x, y, "corrupted")
+            local tile = Tile(x, y, "safe")
             world.map[x][y] = tile
     
             local spawner = Spawner(x, y)

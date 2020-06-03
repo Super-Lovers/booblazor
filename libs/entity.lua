@@ -8,11 +8,13 @@ function Entity:new(x, y, role)
     self.y = y or 0
     self.worldX = 0
     self.worldY = 0
+    self.previousX = 0
+    self.previousY = 0
     self.tileX = 0
     self.tileY = 0
     self.role = role
     self.hitpoints = 100
-    self.movementSpeed = 100
+    self.movementSpeed = 5
     self.lastDirection = "up"
     self.lookingDirection = "up"
     self.projectilesFired = {}
@@ -61,6 +63,9 @@ function Entity:moveInDirection(direction, deltatime)
 end
 
 function Entity:moveTowards(entity, deltatime)
+    self.previousX = self.worldX
+    self.previousY = self.worldY
+
     if self.worldX < entity.worldX then 
         self.x = self.worldX + (self.movementSpeed * deltatime)
     end

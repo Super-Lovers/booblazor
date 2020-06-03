@@ -2,6 +2,7 @@ local slam = require "libs/dependancies/slam"
 require "libs/map"
 require "libs/entity"
 require "libs/player"
+require "libs/assets"
 local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
@@ -21,6 +22,13 @@ local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
 local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
+local playerImage = love.graphics.newImage("assets/images/player.png")
+
+local tiles = {
+    ["safe-tile"] = love.graphics.newImage("assets/images/tile-safe.png"),
+    ["transitioning-tile"] = love.graphics.newImage("assets/images/tile-transitioning.png"),
+    ["corrupted-tile"] = love.graphics.newImage("assets/images/tile-corrupted.png")
+}
 
 -- local tilesetImage = love.graphics.newImage("/assets/images/tilesbatch.png")
 -- tilesetImage:setFilter("nearest", "linear")
@@ -191,24 +199,18 @@ function drawMap()
             local x = x * world.tileSizeX - world.tileSizeX
             local y = y * world.tileSizeY - world.tileSizeY
             
-            if isObjectVisibleInCamera(tile) == true then
+            -- if isObjectVisibleInCamera(tile) == true then
                 if tile.type == "safe" then
-                    local image = love.graphics.newImage("assets/images/tile-safe.png")
-                    
-                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
-                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(tiles["safe-tile"], 128, 128)
+                    love.graphics.draw(tiles["safe-tile"], x, y, 0, scaleX, scaleY)
                 elseif tile.type == "transitioning" then
-                    local image = love.graphics.newImage("assets/images/tile-transitioning.png")
-                    
-                    local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
-                    love.graphics.draw(image, x, y, 0, scaleX, scaleY)
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(tiles["transitioning-tile"], 128, 128)
+                    love.graphics.draw(tiles["transitioning-tile"], x, y, 0, scaleX, scaleY)
                 elseif tile.type == "corrupted" then
-                    -- local image = love.graphics.newImage("assets/images/tile-corrupted.png")
-                    
-                    -- local scaleX, scaleY = getImageScaleFromNewDimensions(image, 80, 80)
-                    -- love.graphics.draw(image, x, y, 0, scaleX, scaleY)
+                    local scaleX, scaleY = getImageScaleFromNewDimensions(tiles["corrupted-tile"], 128, 128)
+                    love.graphics.draw(tiles["corrupted-tile"], x, y, 0, scaleX, scaleY)
                 end
-            end
+            -- end
         end
     end
 end
@@ -218,14 +220,33 @@ function drawEntities()
     for i, entity in pairs(world.entities) do
         if isObjectVisibleInCamera(entity) == true then
             if entity.role == "player" then
-                local image = love.graphics.newImage("assets/images/player.png")
-                love.graphics.draw(image, entity.x, entity.y)
-            elseif entity.role == "cancer cell small" then
-                love.graphics.setColor(255, 255, 0, 0.7)
-                love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
-            elseif entity.role == "cancer cell big" then
-                love.graphics.setColor(255, 0, 1)
-                love.graphics.rectangle("fill", entity.x, entity.y, world.tileSizeX, world.tileSizeY)
+                love.graphics.draw(playerImage, entity.x, entity.y)
+            elseif entity.role == "cancer cell small" or
+                   entity.role == "cancer cell big" then
+
+                    if entity.isPlayerInProximity then
+                        local playerAngle = (math.deg(math.atan2(player.worldY - entity.worldY, player.worldX - entity.worldX)) % 360) * (math.pi / 180)
+                    
+                        local angleCos = math.cos(playerAngle)
+                        local angleSin = math.sin(playerAngle)
+
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.x, entity.y, playerAngle, 1, 1, 61, 52)
+                    else
+                        if entity.worldX > entity.previousX then -- Right direction
+                            radians = -90 * (math.pi / 180)
+                        end
+                        if entity.worldX < entity.previousX then -- Left direction
+                            radians = 90 * (math.pi / 180)
+                        end
+                        if entity.worldY < entity.previousY then -- Up direction
+                            radians = 180 * (math.pi / 180)
+                        end
+                        -- if entity.worldY > entity.previousY then -- Down direction
+                        --     radians = 360 * (math.pi / 180)
+                        -- end
+
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.x, entity.y, radians, 1, 1, 61, 52)
+                    end
             end
         end
     end
@@ -235,11 +256,12 @@ end
 function drawSpawners()
     for i, spawner in pairs(world.spawners) do
         if isObjectVisibleInCamera(spawner) then
-            local x = spawner.x * world.tileSizeX - world.tileSizeX
-            local y = spawner.y * world.tileSizeY - world.tileSizeY
+            local x = spawner.x * world.tileSizeX
+            local y = spawner.y * world.tileSizeY
     
-            love.graphics.setColor(255, 0, 255, 0.5)
-            love.graphics.rectangle("fill", x, y, 256, 256)
+            love.graphics.setColor(255, 255, 255, 1)
+
+            love.graphics.draw(spawner.atlas, spawner.currentSprite, x, y, 0, 1, 1, 256, 256)
         end
     end
 end
@@ -397,7 +419,7 @@ function getImageScaleFromNewDimensions(image, newWidth, newHeight)
 end
 
 function drawInfectionBar()
-    local barWidth = love.graphics.getWidth() * 0.5
+    local barWidth = love.graphics.getWidth()
 
     local maxTiles = world.mapWidth * world.mapHeight
     local infectedTiles = 0
@@ -412,21 +434,33 @@ function drawInfectionBar()
     local infectionPercent = math.floor((infectedTiles / maxTiles) * 100)
     local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
 
-    local barPositionX = love.graphics.getWidth() * 0.5 - barWidth * 0.5
-    local barPositionY = 50
+    local barPositionX = 0
+    local barPositionY = 0
 
     -- Draws both layers for the bar
     love.graphics.setColor(255, 255, 255, 1)
-    love.graphics.rectangle("fill", barPositionX, barPositionY, barWidth, 40)
+    love.graphics.rectangle("fill", barPositionX, barPositionY, barWidth, 30)
     love.graphics.setColor(255, 0, 0, 1)
-    love.graphics.rectangle("fill", barPositionX, barPositionY, infectionBarWidth, 40)
+    love.graphics.rectangle("fill", barPositionX, barPositionY, infectionBarWidth, 30)
     
     -- Draws the percentage label
-    love.graphics.setColor(0, 255, 0, 1)
+    love.graphics.setColor(0, 0, 0, 1)
     love.graphics.setFont(fontText, 8)
 
-    local infectionLabel = infectionPercent .. "%"
-    love.graphics.print(infectionLabel, love.graphics.getWidth() * 0.5, barPositionY + 13)
+    local infectionLabel = 0
 
+    if infectionPercent <= 25 and infectionPercent >= 0 then
+        infectionLabel = "The patient is mostly safe"
+    elseif infectionPercent < 50 and infectionPercent > 25 then
+        infectionLabel = "It is becoming dangerous.."
+    elseif infectionPercent <= 75 and infectionPercent > 50 then
+        infectionLabel = "Chief, it can't get any worse.."
+    elseif infectionPercent > 75 then
+        infectionLabel = "The patient is in grave danger!"
+    end
+
+    local infectionLabelText = love.graphics.newText(fontText, infectionLabel)
+
+    love.graphics.print(infectionLabel, love.graphics.getWidth() * 0.5 - infectionLabelText:getWidth() * 0.5, barPositionY + 8)
     love.graphics.setColor(255, 255, 255, 1)
 end
