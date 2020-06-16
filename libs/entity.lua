@@ -94,6 +94,12 @@ end
 
 function Entity:takeDamage(damage)
     if self.hitpoints - damage <= 0 then
+
+        if #world.entities == 1 and
+           #world.spawners == 0 then
+            state.switch("win");
+        end
+
         self:destroy()
     elseif self.hitpoints - damage > 0 then
         self.hitpoints = self.hitpoints - damage

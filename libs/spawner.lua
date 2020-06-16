@@ -2,6 +2,7 @@ require "libs/cell"
 require "libs/assets"
 local lume = require "../libs/dependancies/lume"
 Spawner = Object:extend()
+local state = require "libs/dependancies/stateswitcher"
 
 function Spawner:new(id, x, y)
     self.id = id
@@ -56,6 +57,12 @@ end
 
 function Spawner:takeDamage(damage)
     if self.hitpoints - damage <= 0 then
+
+        if #world.entities == 0 and
+           #world.spawners == 1 then
+            state.switch("win");
+        end
+
         self:destroy()
     elseif self.hitpoints - damage > 0 then
         self.hitpoints = self.hitpoints - damage

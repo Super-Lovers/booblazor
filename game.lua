@@ -54,7 +54,7 @@ function love.update(dt)
     if isGameLoaded == false then
         tick.recur(tickSpawnerDown, 1)
         tick.recur(moveCells, 0.05)
-        tick.recur(tickCorruption, 1)
+        -- tick.recur(tickCorruption, 1)
 
         createButton(
             0, 0, 0, 0,
@@ -434,6 +434,9 @@ function drawInfectionBar()
     local infectionPercent = math.floor((infectedTiles / maxTiles) * 100)
     local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
 
+    if infectionPercent >= 99 then
+        state.switch("lose")
+    end
     local barPositionX = 0
     local barPositionY = 0
 
@@ -461,6 +464,7 @@ function drawInfectionBar()
 
     local infectionLabelText = love.graphics.newText(fontText, infectionLabel)
 
+    love.graphics.print(infectionPercent .. "%", 30, barPositionY + 8)
     love.graphics.print(infectionLabel, love.graphics.getWidth() * 0.5 - infectionLabelText:getWidth() * 0.5, barPositionY + 8)
     love.graphics.setColor(255, 255, 255, 1)
 end
