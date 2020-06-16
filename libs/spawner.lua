@@ -11,10 +11,10 @@ function Spawner:new(id, x, y)
     self.worldX = 0
     self.worldY = 0
     self.hitpoints = 160
-    self.totalEggs = 2
+    self.totalEggs = tonumber('inf')
     self.currentSprite = nil
     self.eggsLeft = self.totalEggs
-    self.eggSpawnDelay = 1 -- math.random(7) + 3
+    self.eggSpawnDelay = math.random(2) + 1
     self.currentEggSpawnDelay = self.eggSpawnDelay
 
     local spawnerSprites = {}

@@ -272,7 +272,7 @@ function tickSpawnerDown()
     if (gameState ~= "playing") then return end
 
     for i, spawner in pairs(world.spawners) do
-        if spawner.eggsLeft > 1 then
+        if spawner.eggsLeft >= 1 then
             if spawner.currentEggSpawnDelay > 1 then
                 spawner.currentEggSpawnDelay = spawner.currentEggSpawnDelay - 1
             elseif spawner.currentEggSpawnDelay == 1 then
