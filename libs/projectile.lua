@@ -55,4 +55,15 @@ function Projectile:checkCollisions()
             end
         end
     end
+
+    for i, spawner in pairs(world.spawners) do
+        if (self.worldX + 29 > spawner.worldX and -- Left border
+        self.worldX < spawner.worldX + world.tileSizeX * 2 and -- Left border
+        self.worldY + 4 > spawner.worldY and -- Top border
+        self.worldY < spawner.worldY + world.tileSizeY * 2) then -- Bottom border
+
+            spawner:takeDamage(self.attackDamage)
+            self:destroy()
+        end
+    end
 end

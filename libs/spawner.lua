@@ -3,16 +3,17 @@ require "libs/assets"
 local lume = require "../libs/dependancies/lume"
 Spawner = Object:extend()
 
-function Spawner:new(x, y)
+function Spawner:new(id, x, y)
+    self.id = id
     self.x = x or 0
     self.y = y or 0
     self.worldX = 0
     self.worldY = 0
-    self.hitpoints = 100
+    self.hitpoints = 160
     self.totalEggs = 2
     self.currentSprite = nil
     self.eggsLeft = self.totalEggs
-    self.eggSpawnDelay = math.random(7) + 3
+    self.eggSpawnDelay = 1 -- math.random(7) + 3
     self.currentEggSpawnDelay = self.eggSpawnDelay
 
     local spawnerSprites = {}
@@ -30,7 +31,7 @@ function Spawner:spawn()
         ["cancer cell big"] = 1
     })
 
-    local cell = Cell(#world.entities + 1, self.worldX - world.tileSizeX, self.worldY - world.tileSizeY, cancerType)
+    local cell = Cell(#world.entities + 1, self.worldX + world.tileSizeX, self.worldY +world.tileSizeY, cancerType)
 
     local cellAnimationSprites = {}
 
@@ -51,4 +52,16 @@ function Spawner:spawn()
     cell.sprites = cellAnimationSprites
     cell.currentSprite = cell.sprites[1]
     return cell
+end
+
+function Spawner:takeDamage(damage)
+    if self.hitpoints - damage <= 0 then
+        self:destroy()
+    elseif self.hitpoints - damage > 0 then
+        self.hitpoints = self.hitpoints - damage
+    end
+end
+
+function Spawner:destroy()
+    world.spawners[self.id] = nil
 end

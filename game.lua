@@ -225,12 +225,12 @@ function drawEntities()
                    entity.role == "cancer cell big" then
 
                     if entity.isPlayerInProximity then
-                        local playerAngle = (math.deg(math.atan2(player.worldY - entity.worldY, player.worldX - entity.worldX)) % 360) * (math.pi / 180)
+                        local playerAngle = (math.deg(math.atan2(player.worldY - entity.worldY, player.worldX - entity.worldX)) % 360) * (math.pi / 180) + -90
                     
                         local angleCos = math.cos(playerAngle)
                         local angleSin = math.sin(playerAngle)
 
-                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.x, entity.y, playerAngle, 1, 1, 61, 52)
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX, entity.worldY, playerAngle, 1, 1, 64, 52)
                     else
                         if entity.worldX > entity.previousX then -- Right direction
                             radians = -90 * (math.pi / 180)
@@ -245,7 +245,7 @@ function drawEntities()
                         --     radians = 360 * (math.pi / 180)
                         -- end
 
-                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.x, entity.y, radians, 1, 1, 61, 52)
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX, entity.worldY, radians, 1, 1, 64, 52)
                     end
             end
         end
@@ -256,12 +256,12 @@ end
 function drawSpawners()
     for i, spawner in pairs(world.spawners) do
         if isObjectVisibleInCamera(spawner) then
-            local x = spawner.x * world.tileSizeX
-            local y = spawner.y * world.tileSizeY
+            local x = spawner.worldX
+            local y = spawner.worldY
     
             love.graphics.setColor(255, 255, 255, 1)
 
-            love.graphics.draw(spawner.atlas, spawner.currentSprite, x, y, 0, 1, 1, 256, 256)
+            love.graphics.draw(spawner.atlas, spawner.currentSprite, x, y, 0, 1, 1, 0, 0)
         end
     end
 end
