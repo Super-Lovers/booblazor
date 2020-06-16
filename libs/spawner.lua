@@ -16,6 +16,9 @@ function Spawner:new(id, x, y)
     self.eggsLeft = self.totalEggs
     self.eggSpawnDelay = math.random(2) + 1
     self.currentEggSpawnDelay = self.eggSpawnDelay
+    self.fps = 0.60
+    self.currentFps = self.fps
+    self.currentSpriteIndex = 1
 
     local spawnerSprites = {}
 

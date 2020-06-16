@@ -110,6 +110,7 @@ function love.update(dt)
 
         moveProjectiles()
         checkProjectileCollisions()
+        rotateEntitySprites();
     elseif (gameState ~= "playing") then
         if love.mouse.isDown(1) then
             checkMouseButtonMenuPresses()
@@ -211,6 +212,49 @@ function drawMap()
                     love.graphics.draw(tiles["corrupted-tile"], x, y, 0, scaleX, scaleY)
                 end
             -- end
+        end
+    end
+end
+
+function rotateEntitySprites()
+    for i, entity in pairs(world.entities) do
+        if entity.role == "cancer cell small" or
+           entity.role == "cancer cell big" then
+
+            entity.currentFps = entity.currentFps - deltatime
+
+            if entity.currentFps <= 0 then
+                local newSpriteIndex = entity.currentSpriteIndex;
+
+                if newSpriteIndex + 1 > #entity.sprites then
+                    newSpriteIndex = 1
+                else 
+                    newSpriteIndex = newSpriteIndex + 1
+                end
+
+                entity.currentSpriteIndex = newSpriteIndex
+                entity.currentFps = entity.fps
+                entity.currentSprite = entity.sprites[entity.currentSpriteIndex]
+            end
+            
+        end
+    end
+
+    for i, spawner in pairs(world.spawners) do
+        spawner.currentFps = spawner.currentFps - deltatime
+
+        if spawner.currentFps <= 0 then
+            local newSpriteIndex = spawner.currentSpriteIndex;
+
+            if newSpriteIndex + 1 > #spawner.sprites then
+                newSpriteIndex = 1
+            else 
+                newSpriteIndex = newSpriteIndex + 1
+            end
+
+            spawner.currentSpriteIndex = newSpriteIndex
+            spawner.currentFps = spawner.fps
+            spawner.currentSprite = spawner.sprites[spawner.currentSpriteIndex]
         end
     end
 end

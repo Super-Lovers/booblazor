@@ -18,6 +18,9 @@ function Cell:new(id, x, y, role)
     self.sprites = {}
     self.atlas = {}
     self.currentSprite = nil
+    self.fps = 0.30
+    self.currentFps = self.fps
+    self.currentSpriteIndex = 1
 end
 
 function Cell:destroy()
