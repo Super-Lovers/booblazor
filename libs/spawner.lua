@@ -54,6 +54,7 @@ function Spawner:takeDamage(damage)
 
         if #world.entities == 0 and
            #world.spawners == 1 then
+            bugCrawlingController:stop();
             state.switch("win");
         end
 

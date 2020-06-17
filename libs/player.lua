@@ -6,7 +6,7 @@ Player = Entity:extend()
 function Player:new(x, y, role)
     Player.super.new(self, x, y, role)
 
-    self.fireRate = 5 -- 40
+    self.fireRate = 15
     self.fireRateDecay = 100
     self.currentFireRate = self.fireRate
 end

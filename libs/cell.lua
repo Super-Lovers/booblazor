@@ -35,6 +35,7 @@ function Cell:destroy()
 end
 
 function Entity:move(direction, deltatime)
+    Cell.super.moveInDirection(self, direction, deltatime)
     if self.isPlayerInProximity == false then
         Cell.super.moveInDirection(self, direction, deltatime)
     elseif self.isPlayerInProximity == true then

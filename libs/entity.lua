@@ -1,4 +1,5 @@
 require "../libs/projectile"
+require "../audio-setup"
 local lume = require "../libs/dependancies/lume"
 Entity = Object:extend()
 
@@ -22,6 +23,8 @@ end
 
 function Entity:moveInDirection(direction, deltatime)
     self.lastDirection = direction
+    self.previousX = self.worldX
+    self.previousY = self.worldY
 
     -- ==============================
     -- Stops the entitiy from exiting the game borders
@@ -97,6 +100,7 @@ function Entity:takeDamage(damage)
 
         if #world.entities == 1 and
            #world.spawners == 0 then
+            bugCrawlingController:stop();
             state.switch("win");
         end
 

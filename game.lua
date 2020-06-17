@@ -10,6 +10,7 @@ local deltatime = 0
 local windowWidth = love.graphics.getWidth()
 local windowHeight = love.graphics.getHeight()
 
+createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
@@ -92,18 +93,6 @@ function love.update(dt)
             player.lookingDirection = "right"
         end
 
-        if love.keyboard.isScancodeDown("j") and
-            player.currentFireRate <= 0 then
-                local mouseX, mouseY = love.mouse.getPosition()
-                local mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
-            
-                local angleCos = math.cos(mousePlayerAngle)
-                local angleSin = math.sin(mousePlayerAngle)
-
-                player:shoot(angleCos, angleSin, mousePlayerAngle)
-                player.currentFireRate = player.fireRate
-        end
-
         if player.currentFireRate > 0 then
             player.currentFireRate = player.currentFireRate - dt * player.fireRateDecay
         end
@@ -129,6 +118,20 @@ function love.keypressed(key)
         else
             gameState = "title screen"
         end
+    end
+
+    if key == "j" and 
+       player.currentFireRate <= 0 then
+        
+        local mouseX, mouseY = love.mouse.getPosition()
+        local mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
+    
+        local angleCos = math.cos(mousePlayerAngle)
+        local angleSin = math.sin(mousePlayerAngle)
+
+        player:shoot(angleCos, angleSin, mousePlayerAngle)
+        player.currentFireRate = player.fireRate
+
     end
 end
 
@@ -315,7 +318,7 @@ function drawEntities()
                         local angleCos = math.cos(playerAngle)
                         local angleSin = math.sin(playerAngle)
 
-                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX, entity.worldY, playerAngle, 1, 1, 64, 52)
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX + 64, entity.worldY + 52, playerAngle, 1, 1, 64, 52)
                     else
                         if entity.worldX > entity.previousX then -- Right direction
                             radians = -90 * (math.pi / 180)
@@ -326,11 +329,11 @@ function drawEntities()
                         if entity.worldY < entity.previousY then -- Up direction
                             radians = 180 * (math.pi / 180)
                         end
-                        -- if entity.worldY > entity.previousY then -- Down direction
-                        --     radians = 360 * (math.pi / 180)
-                        -- end
+                        if entity.worldY > entity.previousY then -- Down direction
+                            radians = 360 * (math.pi / 180)
+                        end
 
-                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX, entity.worldY, radians, 1, 1, 64, 52)
+                        love.graphics.draw(entity.atlas, entity.currentSprite, entity.worldX + 64, entity.worldY + 52, radians, 1, 1, 64, 52)
                     end
             end
         end
@@ -540,6 +543,7 @@ function drawInfectionBar()
     local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
 
     if infectionPercent >= 100 then
+        bugCrawlingController:stop();
         state.switch("lose")
     end
     local barPositionX = 0

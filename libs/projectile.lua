@@ -13,7 +13,7 @@ function Projectile:new(id, entity, x, y, cos, sin, angle)
     self.angle = angle or 0
     
     self.entity = entity
-    self.speed = 500
+    self.speed = 1000
     self.attackDamage = 20
 
     shootLaser:play()

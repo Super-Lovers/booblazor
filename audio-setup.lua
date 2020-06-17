@@ -13,7 +13,7 @@ hitPlayer:setVolume(volume)
 hitEnemy = love.audio.newSource("assets/sounds/hit_target.wav", "static")
 hitEnemy:setVolume(volume)
 shootLaser = love.audio.newSource("assets/sounds/shoot.wav", "static")
-shootLaser:setVolume(volume)
+shootLaser:setVolume(volume * 0.3)
 
 dialogueLoading = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
 dialogueLoading:setVolume(volume)
