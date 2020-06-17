@@ -19,6 +19,7 @@ world.tileSizeY = 128 -- Manually calculated, 8x8 tiles on screen
 -- List of all the entities in the world
 world.entities = {}
 world.spawners = {}
+world.deathAnimations = {}
 
 
 -- Setting the number of rows in the map table

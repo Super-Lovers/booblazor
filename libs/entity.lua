@@ -105,3 +105,5 @@ function Entity:takeDamage(damage)
         self.hitpoints = self.hitpoints - damage
     end
 end
+
+function Entity:spawnDeathAnimation() end

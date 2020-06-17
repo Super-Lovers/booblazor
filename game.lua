@@ -110,7 +110,8 @@ function love.update(dt)
 
         moveProjectiles()
         checkProjectileCollisions()
-        rotateEntitySprites();
+        rotateEntitySprites()
+        killScheduledDeathAnimations()
     elseif (gameState ~= "playing") then
         if love.mouse.isDown(1) then
             checkMouseButtonMenuPresses()
@@ -140,6 +141,7 @@ function love.draw()
     drawEntities()
     drawSpawners()
     drawProjectiles()
+    drawDeathAnimations()
 
     -- Resets the coordinate system to the default one if it has been
     -- changed with translations
@@ -150,6 +152,14 @@ function love.draw()
     if gameState == "title screen" then
         love.graphics.setColor(255, 255, 255, 1)
         drawMainMenu()
+    end
+end
+
+function killScheduledDeathAnimations()
+    for i, deathAnimation in pairs(world.deathAnimations) do
+        if deathAnimation.scheduleToKill == true then
+            deathAnimation:destroy()
+        end
     end
 end
 
@@ -226,7 +236,8 @@ function rotateEntitySprites()
             if entity.currentFps <= 0 then
                 local newSpriteIndex = entity.currentSpriteIndex;
 
-                if newSpriteIndex + 1 > #entity.sprites then
+                -- they have the same number of frames so its ok to use it
+                if newSpriteIndex + 1 > #smallCellAnimationSprites then
                     newSpriteIndex = 1
                 else 
                     newSpriteIndex = newSpriteIndex + 1
@@ -234,7 +245,11 @@ function rotateEntitySprites()
 
                 entity.currentSpriteIndex = newSpriteIndex
                 entity.currentFps = entity.fps
-                entity.currentSprite = entity.sprites[entity.currentSpriteIndex]
+                if entity.role == "cancer cell small" then
+                    entity.currentSprite = smallCellAnimationSprites[entity.currentSpriteIndex]
+                elseif entity.role == "cancer cell big" then
+                    entity.currentSprite = bigCellAnimationSprites[entity.currentSpriteIndex]
+                end
             end
             
         end
@@ -246,7 +261,7 @@ function rotateEntitySprites()
         if spawner.currentFps <= 0 then
             local newSpriteIndex = spawner.currentSpriteIndex;
 
-            if newSpriteIndex + 1 > #spawner.sprites then
+            if newSpriteIndex + 1 > #spawnerSprites then
                 newSpriteIndex = 1
             else 
                 newSpriteIndex = newSpriteIndex + 1
@@ -254,8 +269,33 @@ function rotateEntitySprites()
 
             spawner.currentSpriteIndex = newSpriteIndex
             spawner.currentFps = spawner.fps
-            spawner.currentSprite = spawner.sprites[spawner.currentSpriteIndex]
+            spawner.currentSprite = spawnerSprites[spawner.currentSpriteIndex]
         end
+    end
+
+    for i, deathAnimation in pairs(world.deathAnimations) do
+        deathAnimation.currentFps = deathAnimation.currentFps - deltatime
+
+        if deathAnimation.currentFps <= 0 then
+            local newSpriteIndex = deathAnimation.currentSpriteIndex;
+
+            if newSpriteIndex + 1 > #bloodFrames then
+                deathAnimation.scheduleToKill = true
+                return
+            else 
+                newSpriteIndex = newSpriteIndex + 1
+            end
+
+            deathAnimation.currentSpriteIndex = newSpriteIndex
+            deathAnimation.currentFps = deathAnimation.fps
+            deathAnimation.currentSprite = bloodFrames[deathAnimation.currentSpriteIndex]
+        end
+    end
+end
+
+function drawDeathAnimations()
+    for i, deathAnimation in pairs(world.deathAnimations) do
+        love.graphics.draw(deathAnimation.atlas, deathAnimation.currentSprite, deathAnimation.worldX, deathAnimation.worldY)
     end
 end
 
@@ -478,7 +518,7 @@ function drawInfectionBar()
     local infectionPercent = math.floor((infectedTiles / maxTiles) * 100)
     local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
 
-    if infectionPercent >= 99 then
+    if infectionPercent >= 100 then
         state.switch("lose")
     end
     local barPositionX = 0

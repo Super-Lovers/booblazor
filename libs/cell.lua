@@ -1,5 +1,6 @@
 require "../libs/entity"
 require "../audio-setup"
+require "../libs/deathAnimation"
 local lume = require "../libs/dependancies/lume"
 Cell = Entity:extend()
 
@@ -15,8 +16,6 @@ function Cell:new(id, x, y, role)
     self.delaySinceLastMove = self.delayToMove
     self.nextDirection = "up"
     self.isPlayerInProximity = false
-    self.sprites = {}
-    self.atlas = {}
     self.currentSprite = nil
     self.fps = 0.30
     self.currentFps = self.fps
@@ -24,6 +23,7 @@ function Cell:new(id, x, y, role)
 end
 
 function Cell:destroy()
+    self:spawnDeathAnimation()
     world.entities[self.id] = nil
 end
 
@@ -86,4 +86,11 @@ function Cell:setIsPlayerInProximity()
             self.isPlayerInProximity = true;
         end
     end
+end
+
+function Cell:spawnDeathAnimation()
+    local deathAnimation = DeathAnimation(#world.deathAnimations + 1, self.worldX, self.worldY)
+    deathAnimation.atlas = enemyBloodAnimationAtlas
+
+    world.deathAnimations[deathAnimation.id] = deathAnimation
 end
