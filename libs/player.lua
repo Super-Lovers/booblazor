@@ -2,6 +2,7 @@ require "../libs/entity"
 require "../libs/projectile"
 require "../audio-setup"
 require "../libs/dependancies/stateswitcher"
+
 Player = Entity:extend()
 
 function Player:new(x, y, role)
@@ -17,6 +18,8 @@ end
 function Player:takeDamage(damage)
     if self.currentTakeDamageRate <= 0 then
         Player.super.takeDamage(self, damage)
+
+        screen:setShake(20)
         
         hitPlayer:play();
         self.currentTakeDamageRate = self.takeDamageRate

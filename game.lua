@@ -3,6 +3,9 @@ require "libs/map"
 require "libs/entity"
 require "libs/player"
 require "libs/assets"
+screen = require "../libs/dependancies/shack"
+screen:setDimensions(love.graphics.getWidth(), love.graphics.getHeight())
+
 local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
@@ -56,6 +59,7 @@ love.mouse.setGrabbed(true)
 
 function love.update(dt)
     tick.update(dt)
+    screen:update(dt)
 
     -- State switcher hack
     if isGameLoaded == false then
@@ -152,6 +156,8 @@ function love.keypressed(key)
 end
 
 function love.draw()
+    screen:apply()
+
     -- Re-positions the coordinate system to center to the player so
     -- that when everything elses' position changes, it will be
     -- relative to the coordinates in the translate parameters

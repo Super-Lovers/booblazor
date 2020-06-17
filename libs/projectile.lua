@@ -52,9 +52,11 @@ function Projectile:checkCollisions()
             self.worldY + 4 > entity.worldY and -- Top border
             self.worldY < entity.worldY + world.tileSizeY) then -- Bottom border
 
+                screen:setShake(10)
+
                 laserHit:play()
                 self:spawnDeathAnimation(self.worldX - 29, self.worldY - 4)
-                
+
                 entity:takeDamage(self.attackDamage)
                 self:destroy()
             end
@@ -66,6 +68,8 @@ function Projectile:checkCollisions()
         self.worldX < spawner.worldX + world.tileSizeX * 2 and -- Left border
         self.worldY + 4 > spawner.worldY and -- Top border
         self.worldY < spawner.worldY + world.tileSizeY * 2) then -- Bottom border
+
+            screen:setShake(10)
 
             laserHit:play()
             self:spawnDeathAnimation(self.worldX - 29, self.worldY - 4)
