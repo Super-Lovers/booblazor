@@ -1,6 +1,7 @@
 require "libs/cell"
 require "libs/assets"
 require "../libs/deathAnimation"
+require "../audio-setup"
 local lume = require "../libs/dependancies/lume"
 Spawner = Object:extend()
 local state = require "libs/dependancies/stateswitcher"
@@ -63,6 +64,13 @@ function Spawner:takeDamage(damage)
 end
 
 function Spawner:destroy()
+    local number = math.random()
+    if number >= 0.5 then
+        destroyCell1:play()
+    elseif number < 0.5 then
+        destroyCell2:play()
+    end
+
     self:spawnDeathAnimation()
     world.spawners[self.id] = nil
 end

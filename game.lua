@@ -45,7 +45,7 @@ local tiles = {
 
 local isGameLoaded = false;
 
-actionBackgroundMusicController:play()
+-- actionBackgroundMusicController:play()
 
 function love.update(dt)
     tick.update(dt)
@@ -112,6 +112,7 @@ function love.update(dt)
         checkProjectileCollisions()
         rotateEntitySprites()
         killScheduledDeathAnimations()
+        toggleBugCrawlingSounds()
     elseif (gameState ~= "playing") then
         if love.mouse.isDown(1) then
             checkMouseButtonMenuPresses()
@@ -320,7 +321,7 @@ function drawEntities()
                             radians = -90 * (math.pi / 180)
                         end
                         if entity.worldX < entity.previousX then -- Left direction
-                            radians = 90 * (math.pi / 180
+                            radians = 90 * (math.pi / 180)
                         end
                         if entity.worldY < entity.previousY then -- Up direction
                             radians = 180 * (math.pi / 180)
@@ -471,6 +472,26 @@ function checkMouseButtonMenuPresses()
     end
 end
 
+function toggleBugCrawlingSounds()
+    local isPlayerInProximity = false
+    
+    for i, entity in pairs(world.entities) do
+        if entity.role == "cancer cell small" or
+           entity.role == "cancer cell big" then
+            if entity.isPlayerInProximity == true then
+                isPlayerInProximity = true
+            end
+        end
+        
+    end
+
+    if isPlayerInProximity == false then
+        bugCrawlingController:stop()
+    else
+        bugCrawlingController:play()
+    end
+end
+
 -- Uses the world positions of both objects to check if they collide
 function doObjectsCollide(objectOne, objectTwo)
     if (objectOne.worldX >= objectTwo.worldX and objectOne.worldX <= objectTwo.worldX + world.tileSizeX) and
@@ -525,13 +546,13 @@ function drawInfectionBar()
     local barPositionY = 0
 
     -- Draws both layers for the bar
-    love.graphics.setColor(255, 255, 255, 1)
+    love.graphics.setColor(0, 0, 0, 1)
     love.graphics.rectangle("fill", barPositionX, barPositionY, barWidth, 30)
     love.graphics.setColor(255, 0, 0, 1)
     love.graphics.rectangle("fill", barPositionX, barPositionY, infectionBarWidth, 30)
     
     -- Draws the percentage label
-    love.graphics.setColor(0, 0, 0, 1)
+    love.graphics.setColor(255, 255, 255, 1)
     love.graphics.setFont(fontText, 8)
 
     local infectionLabel = 0

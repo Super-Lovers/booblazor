@@ -23,6 +23,13 @@ function Cell:new(id, x, y, role)
 end
 
 function Cell:destroy()
+    local number = math.random()
+    if number >= 0.5 then
+        destroyCell1:play()
+    elseif number < 0.5 then
+        destroyCell2:play()
+    end
+
     self:spawnDeathAnimation()
     world.entities[self.id] = nil
 end
@@ -73,7 +80,7 @@ end
 function Cell:takeDamage(damage)
     Cell.super.takeDamage(self, damage)
 
-    hitEnemy:play()
+    -- hitEnemy:play()
 end
 
 function Cell:setIsPlayerInProximity()

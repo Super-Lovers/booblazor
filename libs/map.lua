@@ -43,7 +43,7 @@ end
 for x = 1, world.mapWidth do
     for y = 1, world.mapHeight do
         local choice = lume.weightedchoice({
-                ["corrupted"] = 1,
+                ["corrupted"] = 2,
                 ["safe"] = 70
         })
 
