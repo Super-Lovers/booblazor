@@ -89,7 +89,7 @@ function Cell:setIsPlayerInProximity()
 end
 
 function Cell:spawnDeathAnimation()
-    local deathAnimation = DeathAnimation(#world.deathAnimations + 1, self.worldX, self.worldY)
+    local deathAnimation = DeathAnimation(#world.deathAnimations + 1, self.worldX - 64, self.worldY - 52) -- Offset due to sprite size
     deathAnimation.atlas = enemyBloodAnimationAtlas
 
     world.deathAnimations[deathAnimation.id] = deathAnimation

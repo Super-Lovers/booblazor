@@ -320,7 +320,7 @@ function drawEntities()
                             radians = -90 * (math.pi / 180)
                         end
                         if entity.worldX < entity.previousX then -- Left direction
-                            radians = 90 * (math.pi / 180)
+                            radians = 90 * (math.pi / 180
                         end
                         if entity.worldY < entity.previousY then -- Up direction
                             radians = 180 * (math.pi / 180)
@@ -538,11 +538,11 @@ function drawInfectionBar()
 
     if infectionPercent <= 25 and infectionPercent >= 0 then
         infectionLabel = "The patient is mostly safe"
-    elseif infectionPercent < 50 and infectionPercent > 25 then
+    elseif infectionPercent <= 50 and infectionPercent > 25 then
         infectionLabel = "It is becoming dangerous.."
     elseif infectionPercent <= 75 and infectionPercent > 50 then
         infectionLabel = "Chief, it can't get any worse.."
-    elseif infectionPercent > 75 then
+    elseif infectionPercent >= 75 then
         infectionLabel = "The patient is in grave danger!"
     end
 
