@@ -17,7 +17,6 @@ function Entity:new(x, y, role)
     self.hitpoints = 100
     self.movementSpeed = 5
     self.lastDirection = "up"
-    self.lookingDirection = "up"
     self.projectilesFired = {}
 end
 

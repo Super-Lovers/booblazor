@@ -23,7 +23,8 @@ local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
 local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
-local playerImage = love.graphics.newImage("assets/images/player.png")
+local playerImage = love.graphics.newImage("assets/images/picetto.png")
+local playerLaserImage = love.graphics.newImage("assets/images/laser.png")
 
 local tiles = {
     ["safe-tile"] = love.graphics.newImage("assets/images/tile-safe.png"),
@@ -45,6 +46,8 @@ local tiles = {
 -- tileQuads[2] = love.graphics.newQuad(2 * world.tileSizeX, 0, world.tileSizeX, world.tileSizeX)
 
 local isGameLoaded = false;
+love.mouse.setVisible(false)
+love.mouse.setGrabbed(true)
 
 -- actionBackgroundMusicController:play()
 
@@ -78,19 +81,15 @@ function love.update(dt)
 
         if love.keyboard.isScancodeDown("w") then
              player:moveInDirection("up", dt)
-             player.lookingDirection = "up"
         end
         if love.keyboard.isScancodeDown("s") then
             player:moveInDirection("down", dt)
-            player.lookingDirection = "down"
         end
         if love.keyboard.isScancodeDown("a") then
             player:moveInDirection("left", dt)
-            player.lookingDirection = "left"
         end
         if love.keyboard.isScancodeDown("d") then
             player:moveInDirection("right", dt)
-            player.lookingDirection = "right"
         end
 
         if player.currentFireRate > 0 then
@@ -111,27 +110,37 @@ function love.update(dt)
     deltatime = dt
 end
 
+function love.mousemoved(x, y, dx, dy)
+    -- Prevents the player from turning in the pause menu
+    if gameState ~= "title screen" then
+        mousePlayerAngle = math.atan2(y - windowHeight/2, x - windowWidth/2)
+        
+        mouseAngleCos = math.cos(mousePlayerAngle)
+        mouseAngleSin = math.sin(mousePlayerAngle)
+    end
+end
+
 function love.keypressed(key)
     if key == "escape" then
         if gameState == "title screen" then
             gameState = "playing"
+            love.mouse.setVisible(false)
+            love.mouse.setGrabbed(true)
         else
             gameState = "title screen"
+            love.mouse.setVisible(true)
+            love.mouse.setGrabbed(false)
+            bugCrawlingController:stop()
         end
     end
 
-    if key == "j" and 
-       player.currentFireRate <= 0 then
-        
-        local mouseX, mouseY = love.mouse.getPosition()
-        local mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
-    
-        local angleCos = math.cos(mousePlayerAngle)
-        local angleSin = math.sin(mousePlayerAngle)
+    if gameState ~= "title screen" then
+        if key == "j" and 
+        player.currentFireRate <= 0 then
 
-        player:shoot(angleCos, angleSin, mousePlayerAngle)
-        player.currentFireRate = player.fireRate
-
+            player:shoot(mouseAngleCos, mouseAngleSin, mousePlayerAngle)
+            player.currentFireRate = player.fireRate
+        end
     end
 end
 
@@ -142,9 +151,9 @@ function love.draw()
     love.graphics.translate(-player.x + windowWidth * 0.5, -player.y + windowHeight * 0.5)
 
     drawMap()
-    drawEntities()
     drawSpawners()
     drawProjectiles()
+    drawEntities()
     drawDeathAnimations()
 
     -- Resets the coordinate system to the default one if it has been
@@ -204,7 +213,6 @@ function drawMainMenu()
     end
 end
 
--- TODO: Only draw the tiles in range of the player
 function drawMap()
     love.graphics.setColor(255, 255, 255, 1)
 
@@ -303,12 +311,33 @@ function drawDeathAnimations()
     end
 end
 
--- TODO: Only draw the entities in range of the player
 function drawEntities()
     for i, entity in pairs(world.entities) do
         if isObjectVisibleInCamera(entity) == true then
             if entity.role == "player" then
-                love.graphics.draw(playerImage, entity.x, entity.y)
+
+                if mousePlayerAngle == nil then
+                    local mouseX, mouseY = love.mouse.getPosition()
+                    mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
+                    
+                    mouseAngleCos = math.cos(mousePlayerAngle)
+                    mouseAngleSin = math.sin(mousePlayerAngle)
+                end
+
+                love.graphics.draw(
+                    playerLaserImage,
+                    entity.x,
+                    entity.y,
+                    mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
+                    playerImage:getHeight() * 0.5)
+
+                love.graphics.draw(
+                    playerImage,
+                    entity.x,
+                    entity.y,
+                    mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
+                    playerImage:getHeight() * 0.5)
+
             elseif entity.role == "cancer cell small" or
                    entity.role == "cancer cell big" then
 
@@ -340,7 +369,6 @@ function drawEntities()
     end
 end
 
--- TODO: Only draw the spawners in range of the player
 function drawSpawners()
     for i, spawner in pairs(world.spawners) do
         if isObjectVisibleInCamera(spawner) then
