@@ -3,7 +3,7 @@ require "libs/audioController"
 -- ***********************************
 -- Configuration
 -- ***********************************
-volume = 0.5
+volume = 0.3
 
 -- ***********************************
 -- Sound effects
@@ -14,6 +14,8 @@ hitEnemy = love.audio.newSource("assets/sounds/hit_target.wav", "static")
 hitEnemy:setVolume(volume)
 shootLaser = love.audio.newSource("assets/sounds/shoot.wav", "static")
 shootLaser:setVolume(volume * 0.3)
+laserHit = love.audio.newSource("assets/sounds/laser_hit.wav", "static")
+laserHit:setVolume(volume)
 
 dialogueLoading = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
 dialogueLoading:setVolume(volume)
@@ -26,6 +28,7 @@ destroyCell2 = love.audio.newSource("assets/sounds/blood-splatter-2.wav", "stati
 destroyCell2:setVolume(volume)
 
 bugsCrawling = love.audio.newSource("assets/sounds/bugs_crawling.wav", "static")
+bugsCrawling:setVolume(volume)
 bugCrawlingController = AudioController(bugsCrawling)
 bugCrawlingController.looping = true
 

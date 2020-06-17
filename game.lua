@@ -186,6 +186,10 @@ function drawMainMenu()
     love.graphics.setNewFont("assets/fonts/dpcomic.ttf", fontSize)
     local buttonWidth = windowWidth * (1 / 3)
     local buttonHeight = 20 + fontSize
+
+    love.graphics.setColor(0, 0, 0, 0.8)
+    love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    love.graphics.setColor(255, 255, 255, 1)
     
     love.graphics.draw(logoTitle, 70, windowHeight * 0.4 - logoTitle:getHeight() * windowWidth / 1024 - topMargin, 0, windowWidth / 1024, windowHeight / 1024)
 
@@ -307,7 +311,7 @@ end
 
 function drawDeathAnimations()
     for i, deathAnimation in pairs(world.deathAnimations) do
-        love.graphics.draw(deathAnimation.atlas, deathAnimation.currentSprite, deathAnimation.worldX, deathAnimation.worldY)
+        love.graphics.draw(deathAnimation.atlas, deathAnimation.currentSprite, deathAnimation.worldX, deathAnimation.worldY, 0, deathAnimation.scaleX, deathAnimation.scaleY)
     end
 end
 
@@ -426,7 +430,7 @@ function moveCells()
         end
     end
 end
-
+ 
 function drawProjectiles()
     for i, entity in pairs(world.entities) do
         if #entity.projectilesFired > 0 then

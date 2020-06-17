@@ -78,6 +78,8 @@ end
 
 function Spawner:spawnDeathAnimation()
     local deathAnimation = DeathAnimation(#world.deathAnimations + 1, self.worldX, self.worldY)
+    deathAnimation.scaleX = 1
+    deathAnimation.scaleY = 1
     deathAnimation.atlas = enemyBloodAnimationAtlas
 
     world.deathAnimations[deathAnimation.id] = deathAnimation

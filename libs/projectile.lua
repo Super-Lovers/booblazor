@@ -1,4 +1,5 @@
 require "../audio-setup"
+require "libs/assets"
 Projectile = Object:extend()
 
 -- Direction is required for rotating the bullet
@@ -21,6 +22,7 @@ end
 
 -- Deleted this projectile and its references (on impact)
 function Projectile:destroy()
+    self:spawnDeathAnimation()
     self.entity.projectilesFired[self.id] = nil -- preferred
 
     -- Must investigate why in case I don't understand it right
@@ -50,6 +52,9 @@ function Projectile:checkCollisions()
             self.worldY + 4 > entity.worldY and -- Top border
             self.worldY < entity.worldY + world.tileSizeY) then -- Bottom border
 
+                laserHit:play()
+                self:spawnDeathAnimation(self.worldX - 29, self.worldY - 4)
+                
                 entity:takeDamage(self.attackDamage)
                 self:destroy()
             end
@@ -62,8 +67,20 @@ function Projectile:checkCollisions()
         self.worldY + 4 > spawner.worldY and -- Top border
         self.worldY < spawner.worldY + world.tileSizeY * 2) then -- Bottom border
 
+            laserHit:play()
+            self:spawnDeathAnimation(self.worldX - 29, self.worldY - 4)
+
             spawner:takeDamage(self.attackDamage)
             self:destroy()
         end
     end
+end
+
+function Projectile:spawnDeathAnimation(x, y)
+    local deathAnimation = DeathAnimation(#world.deathAnimations + 1, x, y) -- Offset due to sprite size
+    deathAnimation.scaleX = 0.125
+    deathAnimation.scaleY = 0.125
+    deathAnimation.atlas = laserElectricityAnimationAtlas
+
+    world.deathAnimations[deathAnimation.id] = deathAnimation
 end

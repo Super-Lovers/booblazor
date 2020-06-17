@@ -98,6 +98,8 @@ end
 
 function Cell:spawnDeathAnimation()
     local deathAnimation = DeathAnimation(#world.deathAnimations + 1, self.worldX - 64, self.worldY - 52) -- Offset due to sprite size
+    deathAnimation.scaleX = 1
+    deathAnimation.scaleY = 1
     deathAnimation.atlas = enemyBloodAnimationAtlas
 
     world.deathAnimations[deathAnimation.id] = deathAnimation
