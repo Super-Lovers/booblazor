@@ -20,6 +20,7 @@ function Cell:new(id, x, y, role)
     self.fps = 0.30
     self.currentFps = self.fps
     self.currentSpriteIndex = 1
+    self.damage = 10
 end
 
 function Cell:destroy()
@@ -90,8 +91,12 @@ function Cell:setIsPlayerInProximity()
 
         self.isPlayerInProximity = false;
 
-        if (distanceToPlayer < 400) then
+        if distanceToPlayer < 400 then
             self.isPlayerInProximity = true;
+        end
+
+        if distanceToPlayer < 100 then
+            player:takeDamage(self.damage)
         end
     end
 end

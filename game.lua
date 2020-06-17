@@ -11,9 +11,12 @@ local windowWidth = love.graphics.getWidth()
 local windowHeight = love.graphics.getHeight()
 
 createWorld()
+
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
+player.hitpoints = 100
+
 table.insert(world.entities, player)
 
 -- Playing, Paused, Title Screen
@@ -96,6 +99,10 @@ function love.update(dt)
             player.currentFireRate = player.currentFireRate - dt * player.fireRateDecay
         end
 
+        if player.currentTakeDamageRate > 0 then
+            player.currentTakeDamageRate = player.currentTakeDamageRate - dt
+        end
+
         moveProjectiles()
         checkProjectileCollisions()
         rotateEntitySprites()
@@ -154,6 +161,7 @@ function love.draw()
     drawSpawners()
     drawProjectiles()
     drawEntities()
+    drawPlayer()
     drawDeathAnimations()
 
     -- Resets the coordinate system to the default one if it has been
@@ -315,17 +323,36 @@ function drawDeathAnimations()
     end
 end
 
-function drawEntities()
+local currentTime = 10 * 0.01
+local lastColor = "red"
+function drawPlayer()
     for i, entity in pairs(world.entities) do
         if isObjectVisibleInCamera(entity) == true then
-            if entity.role == "player" then
-
+            if entity.role == "player" and
+               entity.currentTakeDamageRate > 0 then
+                
                 if mousePlayerAngle == nil then
                     local mouseX, mouseY = love.mouse.getPosition()
                     mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
                     
                     mouseAngleCos = math.cos(mousePlayerAngle)
                     mouseAngleSin = math.sin(mousePlayerAngle)
+                end
+
+                if currentTime <= 0 then
+                    if lastColor == "red" then
+                        lastColor = "normal"
+                    else
+                        lastColor = "red"
+                    end
+
+                    currentTime = 10 * 0.01
+                end
+
+                if lastColor == "red" then
+                    love.graphics.setColor(255, 0, 0, 1)
+                else
+                    love.graphics.setColor(255, 255, 255, 1)
                 end
 
                 love.graphics.draw(
@@ -342,7 +369,41 @@ function drawEntities()
                     mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
                     playerImage:getHeight() * 0.5)
 
-            elseif entity.role == "cancer cell small" or
+                currentTime = currentTime - deltatime
+                love.graphics.setColor(255, 255, 255, 1)
+            elseif entity.role == "player" and
+                   entity.currentTakeDamageRate <= 0 then
+                
+                    if mousePlayerAngle == nil then
+                        local mouseX, mouseY = love.mouse.getPosition()
+                        mousePlayerAngle = math.atan2(mouseY - windowHeight/2, mouseX - windowWidth/2)
+                        
+                        mouseAngleCos = math.cos(mousePlayerAngle)
+                        mouseAngleSin = math.sin(mousePlayerAngle)
+                    end
+
+                    love.graphics.draw(
+                        playerLaserImage,
+                        entity.x,
+                        entity.y,
+                        mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
+                        playerImage:getHeight() * 0.5)
+    
+                    love.graphics.draw(
+                        playerImage,
+                        entity.x,
+                        entity.y,
+                        mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
+                        playerImage:getHeight() * 0.5)
+            end
+        end
+    end
+end
+
+function drawEntities()
+    for i, entity in pairs(world.entities) do
+        if isObjectVisibleInCamera(entity) == true then
+            if entity.role == "cancer cell small" or
                    entity.role == "cancer cell big" then
 
                     if entity.isPlayerInProximity then

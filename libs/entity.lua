@@ -14,7 +14,7 @@ function Entity:new(x, y, role)
     self.tileX = 0
     self.tileY = 0
     self.role = role
-    self.hitpoints = 100
+    self.hitpoints = 10
     self.movementSpeed = 5
     self.lastDirection = "up"
     self.projectilesFired = {}
