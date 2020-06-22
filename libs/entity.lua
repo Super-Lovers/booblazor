@@ -89,7 +89,7 @@ function Entity:moveTowards(entity, deltatime)
 end
 
 function Entity:shoot(cos, sin, angle)
-    local projectile = Projectile(#self.projectilesFired + 1, self, self.x, self.y, cos, sin, angle)
+    local projectile = Projectile(#self.projectilesFired + 1, self, self.x, self.y, self.x, self.y, cos, sin, angle)
 
     table.insert(self.projectilesFired, projectile)
 end
