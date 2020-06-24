@@ -170,7 +170,7 @@ function love.draw()
     drawPlayer()
     drawDeathAnimations()
 
-    -- Resets the coordinate system to the default one if it has been
+    -- Resets the coordinate system to the default one if it has been so that you can draw interface elements.
     -- changed with translations
     love.graphics.origin()
 

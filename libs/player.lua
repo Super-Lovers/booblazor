@@ -8,6 +8,8 @@ Player = Entity:extend()
 function Player:new(x, y, role)
     Player.super.new(self, x, y, role)
 
+    self.worldX = x
+    self.worldY = y
     self.fireRate = 15
     self.fireRateDecay = 100
     self.takeDamageRate = 1 -- in seconds time until next damage hit
