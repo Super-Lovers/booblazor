@@ -20,7 +20,6 @@ player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * 
 player.movementSpeed = 380
 player.hitpoints = 1001
 
--- TODO
 local spawnerCollisionPadding = 20
 
 table.insert(world.entities, player)
@@ -58,7 +57,7 @@ local isGameLoaded = false;
 love.mouse.setVisible(false)
 love.mouse.setGrabbed(true)
 
--- actionBackgroundMusicController:play()
+actionBackgroundMusicController:play()
 
 function love.update(dt)
     tick.update(dt)
@@ -97,10 +96,10 @@ function love.update(dt)
             local currentPlayerY = player.worldY
 
             for i, spawner in pairs(world.spawners) do
-                if (currentPlayerX >= spawner.worldX and
-                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2)) and
+                if (currentPlayerX >= spawner.worldX + spawnerCollisionPadding and
+                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2) - spawnerCollisionPadding) and
                    (currentPlayerY - (player.movementSpeed * dt) >= spawner.worldY and
-                   currentPlayerY - (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2)) then
+                   currentPlayerY - (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2) - spawnerCollisionPadding) then
 
                     collidingWithSpawner = true
                     break
@@ -121,10 +120,10 @@ function love.update(dt)
             local currentPlayerY = player.worldY
 
             for i, spawner in pairs(world.spawners) do
-                if (currentPlayerX >= spawner.worldX and
-                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2)) and
-                   (currentPlayerY + (player.movementSpeed * dt) >= spawner.worldY and
-                   currentPlayerY + (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2)) then
+                if (currentPlayerX >= spawner.worldX + spawnerCollisionPadding and
+                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2) - spawnerCollisionPadding) and
+                   (currentPlayerY + (player.movementSpeed * dt) >= spawner.worldY + spawnerCollisionPadding and
+                   currentPlayerY + (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2) + spawnerCollisionPadding) then
 
                     collidingWithSpawner = true
                     break
@@ -145,10 +144,10 @@ function love.update(dt)
             local currentPlayerY = player.worldY
 
             for i, spawner in pairs(world.spawners) do
-                if (currentPlayerX - (player.movementSpeed * dt) >= spawner.worldX and
-                   currentPlayerX - (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2)) and
-                   (currentPlayerY >= spawner.worldY and
-                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2)) then
+                if (currentPlayerX - (player.movementSpeed * dt) >= spawner.worldX + spawnerCollisionPadding and
+                   currentPlayerX - (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2) - spawnerCollisionPadding) and
+                   (currentPlayerY >= spawner.worldY + spawnerCollisionPadding and
+                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2) - spawnerCollisionPadding) then
 
                     collidingWithSpawner = true
                     break
@@ -169,10 +168,10 @@ function love.update(dt)
             local currentPlayerY = player.worldY
 
             for i, spawner in pairs(world.spawners) do
-                if (currentPlayerX + (player.movementSpeed * dt) >= spawner.worldX and
-                   currentPlayerX + (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2)) and
-                   (currentPlayerY >= spawner.worldY and
-                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2)) then
+                if (currentPlayerX + (player.movementSpeed * dt) >= spawner.worldX + spawnerCollisionPadding and
+                   currentPlayerX + (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2) - spawnerCollisionPadding) and
+                   (currentPlayerY >= spawner.worldY + spawnerCollisionPadding and
+                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2) - spawnerCollisionPadding) then
 
                     collidingWithSpawner = true
                     break
@@ -210,7 +209,7 @@ function love.update(dt)
 end
 
 function love.mousepressed(x, y, button)
-    if button == 1 then
+    if button == 1 and gameState == "playing" then
         player:shoot(mouseAngleCos, mouseAngleSin, mousePlayerAngle)
         player.currentFireRate = player.fireRate
     end
@@ -682,8 +681,10 @@ end
 
 -- Uses the world positions of both objects to check if they collide
 function doObjectsCollide(objectOne, objectTwo, multiplier)
-    if (objectOne.worldX >= objectTwo.worldX and objectOne.worldX <= objectTwo.worldX + (world.tileSizeX * multiplier)) and
-        (objectOne.worldY >= objectTwo.worldY and objectOne.worldY <= objectTwo.worldY + (world.tileSizeY * multiplier)) then
+    if (objectOne.worldX >= objectTwo.worldX and
+        objectOne.worldX <= objectTwo.worldX + (world.tileSizeX * multiplier)) and
+        (objectOne.worldY >= objectTwo.worldY and
+        objectOne.worldY <= objectTwo.worldY + (world.tileSizeY * multiplier)) then
         return true
     end
 
@@ -728,6 +729,11 @@ function drawInfectionBar()
     local infectionBarWidth = math.floor(barWidth * (infectionPercent * 0.01))
 
     if infectionPercent >= 100 then
+        gameState = "title screen"
+        actionBackgroundMusicController:stop()
+        love.mouse.setVisible(true)
+        love.mouse.setGrabbed(false)
+
         bugCrawlingController:stop();
         state.switch("lose")
     end
