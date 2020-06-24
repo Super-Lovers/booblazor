@@ -20,6 +20,9 @@ player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * 
 player.movementSpeed = 380
 player.hitpoints = 1001
 
+-- TODO
+local spawnerCollisionPadding = 20
+
 table.insert(world.entities, player)
 
 -- Playing, Paused, Title Screen
@@ -83,20 +86,105 @@ function love.update(dt)
 
     if gameState == "playing" then
         love.graphics.clear()
-
         -- moveCells()
 
         if love.keyboard.isScancodeDown("w") then
-             player:moveInDirection("up", dt)
+            local collidingWithSpawner = false
+
+            -- These are repeating lines because the player CAN be moving in more than
+            -- one direction, so we need to check each time.
+            local currentPlayerX = player.worldX
+            local currentPlayerY = player.worldY
+
+            for i, spawner in pairs(world.spawners) do
+                if (currentPlayerX >= spawner.worldX and
+                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2)) and
+                   (currentPlayerY - (player.movementSpeed * dt) >= spawner.worldY and
+                   currentPlayerY - (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2)) then
+
+                    collidingWithSpawner = true
+                    break
+                end
+            end
+            
+            if collidingWithSpawner == false then
+                player:moveInDirection("up", dt)
+            else
+                player.worldX = currentPlayerX
+                player.worldY = currentPlayerY
+            end
         end
         if love.keyboard.isScancodeDown("s") then
-            player:moveInDirection("down", dt)
+            local collidingWithSpawner = false
+
+            local currentPlayerX = player.worldX
+            local currentPlayerY = player.worldY
+
+            for i, spawner in pairs(world.spawners) do
+                if (currentPlayerX >= spawner.worldX and
+                   currentPlayerX <= spawner.worldX + (world.tileSizeX * 2)) and
+                   (currentPlayerY + (player.movementSpeed * dt) >= spawner.worldY and
+                   currentPlayerY + (player.movementSpeed * dt) <= spawner.worldY + (world.tileSizeY * 2)) then
+
+                    collidingWithSpawner = true
+                    break
+                end
+            end
+            
+            if collidingWithSpawner == false then
+                player:moveInDirection("down", dt)
+            else
+                player.worldX = currentPlayerX
+                player.worldY = currentPlayerY
+            end
         end
         if love.keyboard.isScancodeDown("a") then
-            player:moveInDirection("left", dt)
+            local collidingWithSpawner = false
+
+            local currentPlayerX = player.worldX
+            local currentPlayerY = player.worldY
+
+            for i, spawner in pairs(world.spawners) do
+                if (currentPlayerX - (player.movementSpeed * dt) >= spawner.worldX and
+                   currentPlayerX - (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2)) and
+                   (currentPlayerY >= spawner.worldY and
+                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2)) then
+
+                    collidingWithSpawner = true
+                    break
+                end
+            end
+            
+            if collidingWithSpawner == false then
+                player:moveInDirection("left", dt)
+            else
+                player.worldX = currentPlayerX
+                player.worldY = currentPlayerY
+            end
         end
         if love.keyboard.isScancodeDown("d") then
-            player:moveInDirection("right", dt)
+            local collidingWithSpawner = false
+
+            local currentPlayerX = player.worldX
+            local currentPlayerY = player.worldY
+
+            for i, spawner in pairs(world.spawners) do
+                if (currentPlayerX + (player.movementSpeed * dt) >= spawner.worldX and
+                   currentPlayerX + (player.movementSpeed * dt) <= spawner.worldX + (world.tileSizeX * 2)) and
+                   (currentPlayerY >= spawner.worldY and
+                   currentPlayerY <= spawner.worldY + (world.tileSizeY * 2)) then
+
+                    collidingWithSpawner = true
+                    break
+                end
+            end
+            
+            if collidingWithSpawner == false then
+                player:moveInDirection("right", dt)
+            else
+                player.worldX = currentPlayerX
+                player.worldY = currentPlayerY
+            end
         end
 
         if player.currentFireRate > 0 then
@@ -162,10 +250,10 @@ function love.draw()
     love.graphics.translate(-player.x + windowWidth * 0.5, -player.y + windowHeight * 0.5)
 
     drawMap()
+    drawPlayer()
     drawSpawners()
     drawProjectiles()
     drawEntities()
-    drawPlayer()
     drawDeathAnimations()
 
     -- Resets the coordinate system to the default one if it has been so that you can draw interface elements.
@@ -593,9 +681,9 @@ function toggleBugCrawlingSounds()
 end
 
 -- Uses the world positions of both objects to check if they collide
-function doObjectsCollide(objectOne, objectTwo)
-    if (objectOne.worldX >= objectTwo.worldX and objectOne.worldX <= objectTwo.worldX + world.tileSizeX) and
-        (objectOne.worldY >= objectTwo.worldY and objectOne.worldY <= objectTwo.worldY + world.tileSizeY) then
+function doObjectsCollide(objectOne, objectTwo, multiplier)
+    if (objectOne.worldX >= objectTwo.worldX and objectOne.worldX <= objectTwo.worldX + (world.tileSizeX * multiplier)) and
+        (objectOne.worldY >= objectTwo.worldY and objectOne.worldY <= objectTwo.worldY + (world.tileSizeY * multiplier)) then
         return true
     end
 
