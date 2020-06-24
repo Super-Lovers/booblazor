@@ -39,10 +39,10 @@ function Projectile:push(dt)
     self.y = self.y + self.speed * self.sin * dt
 
     -- Unlimited range setting
-    -- if self.x < 0 then self:destroy() end
-    -- if self.x > world.mapWidth * world.tileSizeX then self:destroy() end
-    -- if self.y < 0 then self:destroy() end
-    -- if self.y > world.mapHeight * world.tileSizeY then self:destroy() end
+    if self.x < 0 then self:destroy() end
+    if self.x > world.mapWidth * world.tileSizeX then self:destroy() end
+    if self.y < 0 then self:destroy() end
+    if self.y > world.mapHeight * world.tileSizeY then self:destroy() end
 
     -- Limited range setting
     if self.x < self.startX - self.radius then self:destroy() end

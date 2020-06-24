@@ -11,6 +11,8 @@ local myFinder
 function Cell:new(id, x, y, role)
     Cell.super.new(self, x, y, role)
 
+    self.worldX = x
+    self.worldY = y
     self.id = id
     self.delayToMove = math.random(7) + 3
     self.delaySinceLastMove = self.delayToMove

@@ -32,5 +32,5 @@ function Player:destroy()
     love.mouse.setVisible(true)
     love.mouse.setGrabbed(false)
 
-    state.switch("lose")
+    state.switch("death")
 end

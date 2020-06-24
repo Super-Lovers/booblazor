@@ -18,7 +18,7 @@ createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
-player.hitpoints = 100
+player.hitpoints = 1001
 
 table.insert(world.entities, player)
 
@@ -121,6 +121,13 @@ function love.update(dt)
     deltatime = dt
 end
 
+function love.mousepressed(x, y, button)
+    if button == 1 then
+        player:shoot(mouseAngleCos, mouseAngleSin, mousePlayerAngle)
+        player.currentFireRate = player.fireRate
+    end
+end
+
 function love.mousemoved(x, y, dx, dy)
     -- Prevents the player from turning in the pause menu
     if gameState ~= "title screen" then
@@ -142,15 +149,6 @@ function love.keypressed(key)
             love.mouse.setVisible(true)
             love.mouse.setGrabbed(false)
             bugCrawlingController:stop()
-        end
-    end
-
-    if gameState ~= "title screen" then
-        if key == "j" and 
-        player.currentFireRate <= 0 then
-
-            player:shoot(mouseAngleCos, mouseAngleSin, mousePlayerAngle)
-            player.currentFireRate = player.fireRate
         end
     end
 end

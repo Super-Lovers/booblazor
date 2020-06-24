@@ -40,21 +40,26 @@ function createWorld()
     end
     
     -- Populates the map with spawners
+    local paddingTiles = 1
+
     for x = 1, world.mapWidth do
         for y = 1, world.mapHeight do
-            local choice = lume.weightedchoice({
-                    ["corrupted"] = 2,
-                    ["safe"] = 70
-            })
-    
-            if choice == "corrupted" then
-                local tile = Tile(x, y, "safe")
-                world.map[x][y] = tile
+            if x < world.mapWidth - paddingTiles and
+               y < world.mapHeight - paddingTiles then
+                local choice = lume.weightedchoice({
+                        ["corrupted"] = 2,
+                        ["safe"] = 70
+                })
         
-                local spawner = Spawner(#world.spawners + 1, x, y)
-                spawner.worldX = x * world.tileSizeX
-                spawner.worldY = y * world.tileSizeY
-                table.insert(world.spawners, spawner)
+                if choice == "corrupted" then
+                    local tile = Tile(x, y, "safe")
+                    world.map[x][y] = tile
+            
+                    local spawner = Spawner(#world.spawners + 1, x, y)
+                    spawner.worldX = x * world.tileSizeX
+                    spawner.worldY = y * world.tileSizeY
+                    table.insert(world.spawners, spawner)
+                end
             end
         end
     end
