@@ -16,7 +16,7 @@ function Spawner:new(id, x, y)
     self.totalEggs = tonumber('inf')
     self.currentSprite = nil
     self.eggsLeft = self.totalEggs
-    self.eggSpawnDelay = math.random(2) + 1
+    self.eggSpawnDelay = math.random(7) + 3
     self.currentEggSpawnDelay = self.eggSpawnDelay
     self.fps = 0.90
     self.currentFps = self.fps

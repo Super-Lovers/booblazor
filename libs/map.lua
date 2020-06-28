@@ -47,8 +47,8 @@ function createWorld()
             if x < world.mapWidth - paddingTiles and
                y < world.mapHeight - paddingTiles then
                 local choice = lume.weightedchoice({
-                        ["corrupted"] = 2,
-                        ["safe"] = 70
+                        ["corrupted"] = 3,
+                        ["safe"] = 97
                 })
         
                 if choice == "corrupted" then

@@ -5,10 +5,8 @@ Projectile = Object:extend()
 -- Direction is required for rotating the bullet
 function Projectile:new(id, entity, x, y, startX, startY, cos, sin, angle)
     self.id = id
-    self.x = x or 0
-    self.y = y or 0
-    self.worldX = 0
-    self.worldY = 0
+    self.worldX = x or 0
+    self.worldY = y or 0
     self.cos = cos or 0
     self.sin = sin or 0
     self.angle = angle or 0
@@ -35,23 +33,20 @@ function Projectile:destroy()
 end
 
 function Projectile:push(dt)
-    self.x = self.x + self.speed * self.cos * dt
-    self.y = self.y + self.speed * self.sin * dt
+    self.worldX = self.worldX + self.speed * self.cos * dt
+    self.worldY = self.worldY + self.speed * self.sin * dt
 
     -- Unlimited range setting
-    if self.x < 0 then self:destroy() end
-    if self.x > world.mapWidth * world.tileSizeX then self:destroy() end
-    if self.y < 0 then self:destroy() end
-    if self.y > world.mapHeight * world.tileSizeY then self:destroy() end
+    if self.worldX < 0 then self:destroy() end
+    if self.worldX > world.mapWidth * world.tileSizeX then self:destroy() end
+    if self.worldY < 0 then self:destroy() end
+    if self.worldY > world.mapHeight * world.tileSizeY then self:destroy() end
 
     -- Limited range setting
-    if self.x < self.startX - self.radius then self:destroy() end
-    if self.x > self.startX + self.radius then self:destroy() end
-    if self.y < self.startY - self.radius then self:destroy() end
-    if self.y > self.startY + self.radius then self:destroy() end
-
-    self.worldX = self.x
-    self.worldY = self.y
+    if self.worldX < self.startX - self.radius then self:destroy() end
+    if self.worldX > self.startX + self.radius then self:destroy() end
+    if self.worldY < self.startY - self.radius then self:destroy() end
+    if self.worldY > self.startY + self.radius then self:destroy() end
 end
 
 function Projectile:checkCollisions()

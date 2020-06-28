@@ -15,12 +15,13 @@ function Entity:new(x, y, role)
     self.tileY = 0
     self.role = role
     self.hitpoints = 10
-    self.movementSpeed = 5
+    self.movementSpeed = 1000
+    self.speedMultiplier = 0.01
     self.lastDirection = "up"
     self.projectilesFired = {}
 end
 
-function Entity:moveInDirection(direction, deltatime)
+function Entity:moveInDirection(direction, dt)
     self.lastDirection = direction
     self.previousX = self.worldX
     self.previousY = self.worldY
@@ -30,66 +31,60 @@ function Entity:moveInDirection(direction, deltatime)
     local rightBorder = world.mapWidth * world.tileSizeX - world.tileSizeX * 0.5
     local topBorder = world.mapHeight * world.tileSizeY - world.tileSizeX * 0.5
 
-    if self.y < 0 then
-        self.y = 0
+    if self.worldY < 0 then
+        self.worldY = 0
         return
     end
-    if self.y > topBorder then
-        self.y = topBorder
+    if self.worldY > topBorder then
+        self.worldY = topBorder
         return
     end
-    if self.x < 0 then
-        self.x = 0
+    if self.worldX < 0 then
+        self.worldX = 0
         return
     end
-    if self.x > rightBorder then
-        self.x = rightBorder
+    if self.worldX > rightBorder then
+        self.worldX = rightBorder
         return
     end
 
     if direction == "up" then
-        self.y = self.y - self.movementSpeed * deltatime
+        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier
     elseif direction == "down" then
-        self.y = self.y + self.movementSpeed * deltatime
+        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier
     elseif direction == "left" then
-        self.x = self.x - self.movementSpeed * deltatime
+        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier
     elseif direction == "right" then
-        self.x = self.x + self.movementSpeed * deltatime
+        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier
     end
-
-    self.worldX = self.x
-    self.worldY = self.y
 
     self.tileX = math.ceil((self.worldX / world.tileSizeX) + 0.5)
     self.tileY = math.ceil((self.worldY / world.tileSizeY) + 0.5)
 end
 
-function Entity:moveTowards(entity, deltatime)
+function Entity:moveTowards(entity, dt)
     self.previousX = self.worldX
     self.previousY = self.worldY
 
     if self.worldX < entity.worldX then 
-        self.x = self.worldX + (self.movementSpeed * deltatime)
+        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier
     end
     
     if self.worldX > entity.worldX then
-        self.x = self.worldX - (self.movementSpeed * deltatime)
+        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier
     end
     
     if self.worldY < entity.worldY then 
-        self.y = self.worldY + (self.movementSpeed * deltatime)
+        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier
     end
     
     if self.worldY > entity.worldY then
-        self.y = self.worldY - (self.movementSpeed * deltatime)
+        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier
     end
-
-    self.worldX = self.x
-    self.worldY = self.y
 end
 
 function Entity:shoot(cos, sin, angle)
-    local projectile = Projectile(#self.projectilesFired + 1, self, self.x, self.y, self.x, self.y, cos, sin, angle)
+    local projectile = Projectile(#self.projectilesFired + 1, self, self.worldX, self.worldY, self.worldX, self.worldY, cos, sin, angle)
 
     table.insert(self.projectilesFired, projectile)
 end

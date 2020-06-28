@@ -19,7 +19,7 @@ function Cell:new(id, x, y, role)
     self.nextDirection = "up"
     self.isPlayerInProximity = false
     self.currentSprite = nil
-    self.fps = 0.30
+    self.fps = 0.30 -- sprites animation speed
     self.currentFps = self.fps
     self.currentSpriteIndex = 1
     self.damage = 10

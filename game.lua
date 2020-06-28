@@ -18,9 +18,9 @@ createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
-player.hitpoints = 1001
+player.hitpoints = 150
 
-local spawnerCollisionPadding = 20
+local spawnerCollisionPadding = 0
 
 table.insert(world.entities, player)
 
@@ -66,7 +66,7 @@ function love.update(dt)
     -- State switcher hack
     if isGameLoaded == false then
         tick.recur(tickSpawnerDown, 1)
-        tick.recur(moveCells, 0.05)
+        tick.recur(moveCells, dt)
         -- tick.recur(tickCorruption, 1)
 
         createButton(
@@ -246,13 +246,13 @@ function love.draw()
     -- Re-positions the coordinate system to center to the player so
     -- that when everything elses' position changes, it will be
     -- relative to the coordinates in the translate parameters
-    love.graphics.translate(-player.x + windowWidth * 0.5, -player.y + windowHeight * 0.5)
+    love.graphics.translate(-player.worldX + windowWidth * 0.5, -player.worldY + windowHeight * 0.5)
 
     drawMap()
-    drawPlayer()
-    drawSpawners()
     drawProjectiles()
+    drawPlayer()
     drawEntities()
+    drawSpawners()
     drawDeathAnimations()
 
     -- Resets the coordinate system to the default one if it has been so that you can draw interface elements.
@@ -448,15 +448,15 @@ function drawPlayer()
 
                 love.graphics.draw(
                     playerLaserImage,
-                    entity.x,
-                    entity.y,
+                    entity.worldX,
+                    entity.worldY,
                     mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
                     playerImage:getHeight() * 0.5)
 
                 love.graphics.draw(
                     playerImage,
-                    entity.x,
-                    entity.y,
+                    entity.worldX,
+                    entity.worldY,
                     mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
                     playerImage:getHeight() * 0.5)
 
@@ -475,15 +475,15 @@ function drawPlayer()
 
                     love.graphics.draw(
                         playerLaserImage,
-                        entity.x,
-                        entity.y,
+                        entity.worldX,
+                        entity.worldY,
                         mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
                         playerImage:getHeight() * 0.5)
     
                     love.graphics.draw(
                         playerImage,
-                        entity.x,
-                        entity.y,
+                        entity.worldX,
+                        entity.worldY,
                         mousePlayerAngle, 1, 1, playerImage:getWidth() * 0.5,
                         playerImage:getHeight() * 0.5)
             end
@@ -567,18 +567,25 @@ function moveCells()
         if entity.role == "cancer cell small" or
            entity.role == "cancer cell big" then
 
-            if (entity.delaySinceLastMove > 1) then
-                entity.delaySinceLastMove = entity.delaySinceLastMove - 1
-            elseif (entity.delaySinceLastMove == 1) then
-                local directionToMove = entity:getDirection()
+            local directionToMove = entity:getDirection()
 
-                if directionToMove ~= entity.lastDirection then
-                    entity:move(directionToMove, deltatime)
-                    entity:infest()
-                end
-
-                entity.delaySinceLastMove = entity.delayToMove
+            if directionToMove ~= entity.lastDirection then
+                entity:move(directionToMove, deltatime)
+                entity:infest()
             end
+
+            -- if (entity.delaySinceLastMove > 1) then
+            --     entity.delaySinceLastMove = entity.delaySinceLastMove - 1
+            -- elseif (entity.delaySinceLastMove == 1) then
+            --     local directionToMove = entity:getDirection()
+
+            --     if directionToMove ~= entity.lastDirection then
+            --         entity:move(directionToMove, deltatime)
+            --         entity:infest()
+            --     end
+
+            --     entity.delaySinceLastMove = entity.delayToMove
+            -- end
         end
     end
 end
@@ -590,7 +597,7 @@ function drawProjectiles()
                 if isObjectVisibleInCamera(projectile) then
                     local image = love.graphics.newImage("assets/images/laser_projectile.png")
     
-                    local drawable = love.graphics.draw(image, projectile.x, projectile.y, projectile.angle, 1, 1, 2, 28)
+                    local drawable = love.graphics.draw(image, projectile.worldX, projectile.worldY, projectile.angle, 1, 1, 2, 28)
                     
                     projectile.drawable = drawable
                 end
