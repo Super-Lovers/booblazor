@@ -29,6 +29,7 @@ function Player:takeDamage(damage)
 end
 
 function Player:destroy()
+    actionBackgroundMusicController:stop()
     love.mouse.setVisible(true)
     love.mouse.setGrabbed(false)
 

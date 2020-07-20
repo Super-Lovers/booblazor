@@ -17,6 +17,11 @@ talkSound:setVolume(volume)
 talkies.talkSound = talkSound
 local isMessageLoading = true
 
+function love.load()
+    talkSound:setVolume(volume)
+    talkies.talkSound = talkSound
+end
+
 function loadDialogueLines()
     local dialogueFile = io.open("assets/intro_dialogue.json")
     local dialogueFileLines = dialogueFile:lines()
