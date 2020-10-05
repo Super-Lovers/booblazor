@@ -32,43 +32,13 @@ function createButton(x, y, width, height, text, event)
     table.insert(menuItems, button)
 end
 
--- State switcher hack
-if passvar[1] == "backFromGame" then
-    stopClicksFromStateTransition = true
-
-    if isGameLoaded == false then
-        createButton(
-            0, 0, 0, 0,
-            "Play",
-            function() 
-                mainMenuBackgroundMusicController:stop()
-                state.switch("game")
-            end)
-        createButton(
-            0, 0, 0, 0,
-            "More",
-            function() state.switch("more") end)
-        createButton(
-            0, 0, 0, 0,
-            "Credits",
-            function() state.switch("credits") end)
-        createButton(
-            0, 0, 0, 0,
-            "Quit", 
-            function() love.event.quit(0) end)
-
-        tick.delay(function() stopClicksFromStateTransition = false end, 0.5)
-        isGameLoaded = true
-    end
-end
-
-function love.load()
+if isGameLoaded == false then
     createButton(
         0, 0, 0, 0,
         "Play",
-        function()
+        function() 
             mainMenuBackgroundMusicController:stop()
-            state.switch("game")
+            state.switch("intro")
         end)
     createButton(
         0, 0, 0, 0,
@@ -82,6 +52,9 @@ function love.load()
         0, 0, 0, 0,
         "Quit", 
         function() love.event.quit(0) end)
+
+    tick.delay(function() stopClicksFromStateTransition = false end, 0.5)
+    isGameLoaded = true
 end
 
 function love.update(deltatime)

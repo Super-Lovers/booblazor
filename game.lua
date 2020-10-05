@@ -18,7 +18,7 @@ createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
-player.hitpoints = 1
+player.hitpoints = 100
 
 local spawnerCollisionPadding = 0
 
@@ -39,6 +39,8 @@ local tiles = {
     ["transitioning-tile"] = love.graphics.newImage("assets/images/tile-transitioning.png"),
     ["corrupted-tile"] = love.graphics.newImage("assets/images/tile-corrupted.png")
 }
+local counter = 0
+counter = counter + 1
 
 -- local tilesetImage = love.graphics.newImage("/assets/images/tilesbatch.png")
 -- tilesetImage:setFilter("nearest", "linear")
@@ -53,7 +55,7 @@ local tiles = {
 -- -- tile corrupted
 -- tileQuads[2] = love.graphics.newQuad(2 * world.tileSizeX, 0, world.tileSizeX, world.tileSizeX)
 
-local isGameLoaded = false;
+local isGameLoaded = false
 love.mouse.setVisible(false)
 love.mouse.setGrabbed(true)
 

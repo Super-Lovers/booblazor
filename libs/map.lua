@@ -3,9 +3,6 @@ require "../libs/spawner"
 local lume = require "../libs/dependancies/lume"
 
 function createWorld()
-    -- 0 = safe
-    -- 1 = corrupted
-    -- 2 = transitioning
     world = {}
     world.map = {}
     -- The same grid as the map, but uses numbers to indicate tiles on each cell
@@ -35,6 +32,9 @@ function createWorld()
             tile.worldX = x * world.tileSizeX
             tile.worldY = y * world.tileSizeY
             world.map[x][y] = tile
+            -- 0 = safe
+            -- 1 = corrupted
+            -- 2 = transitioning
             world.numberGrid[x][y] = 0
         end
     end

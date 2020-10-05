@@ -16,7 +16,7 @@ function Entity:new(x, y, role)
     self.role = role
     self.hitpoints = 10
     self.movementSpeed = 1000
-    self.speedMultiplier = 0.01
+    self.speedMultiplier = 0.7
     self.lastDirection = "up"
     self.projectilesFired = {}
 end
@@ -49,13 +49,13 @@ function Entity:moveInDirection(direction, dt)
     end
 
     if direction == "up" then
-        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier
+        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier * dt
     elseif direction == "down" then
-        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier
+        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier * dt
     elseif direction == "left" then
-        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier
+        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier * dt
     elseif direction == "right" then
-        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier
+        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier * dt
     end
 
     self.tileX = math.ceil((self.worldX / world.tileSizeX) + 0.5)
@@ -67,19 +67,19 @@ function Entity:moveTowards(entity, dt)
     self.previousY = self.worldY
 
     if self.worldX < entity.worldX then 
-        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier
+        self.worldX = self.worldX + self.movementSpeed * self.speedMultiplier * dt
     end
     
     if self.worldX > entity.worldX then
-        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier
+        self.worldX = self.worldX - self.movementSpeed * self.speedMultiplier * dt
     end
     
     if self.worldY < entity.worldY then 
-        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier
+        self.worldY = self.worldY + self.movementSpeed * self.speedMultiplier * dt
     end
     
     if self.worldY > entity.worldY then
-        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier
+        self.worldY = self.worldY - self.movementSpeed * self.speedMultiplier * dt
     end
 end
 

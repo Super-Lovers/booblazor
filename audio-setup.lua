@@ -3,7 +3,7 @@ require "libs/audioController"
 -- ***********************************
 -- Configuration
 -- ***********************************
-volume = 0.3
+volume = 0
 
 -- ***********************************
 -- Sound effects

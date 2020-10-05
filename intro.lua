@@ -17,11 +17,6 @@ talkSound:setVolume(volume)
 talkies.talkSound = talkSound
 local isMessageLoading = true
 
-function love.load()
-    talkSound:setVolume(volume)
-    talkies.talkSound = talkSound
-end
-
 function loadDialogueLines()
     local dialogueFile = io.open("assets/intro_dialogue.json")
     local dialogueFileLines = dialogueFile:lines()
@@ -52,13 +47,13 @@ function love.keypressed(key)
         if currentDialogueIndex < #dialogue + 1 then
             talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
                 onstart = function()
+                    isMessageLoading = true
                     tick.delay(function() isMessageLoading = false end, 3)
                 end,
                 backgroundColor = {0, 0, 0, 0}
             })
 
             talkies.onAction()
-            isMessageLoading = true
 
         elseif currentDialogueIndex == #dialogue + 1 then
             talkies.clearMessages()
