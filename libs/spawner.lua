@@ -4,7 +4,6 @@ require "../libs/deathAnimation"
 require "../audio-setup"
 local lume = require "../libs/dependancies/lume"
 Spawner = Object:extend()
-local state = require "libs/dependancies/stateswitcher"
 
 function Spawner:new(id, x, y)
     self.id = id

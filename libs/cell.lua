@@ -39,13 +39,14 @@ end
 
 function Entity:move(direction, deltatime)
     Cell.super.moveInDirection(self, direction, deltatime)
-    if self.isPlayerInProximity == false then
-        Cell.super.moveInDirection(self, direction, deltatime)
-    elseif self.isPlayerInProximity == true then
-        Cell.super.moveTowards(self, player, deltatime)
-    end
+    -- Cell.super.moveInDirection(self, direction, deltatime)
+    -- if self.isPlayerInProximity == false then
+    --     Cell.super.moveInDirection(self, direction, deltatime)
+    -- elseif self.isPlayerInProximity == true then
+    --     Cell.super.moveTowards(self, player, deltatime)
+    -- end
 
-    self:setIsPlayerInProximity()
+    -- self:setIsPlayerInProximity()
 end
 
 function Cell:infest()

@@ -15,14 +15,18 @@ function Entity:new(x, y, role)
     self.tileY = 0
     self.role = role
     self.hitpoints = 10
-    self.movementSpeed = 1000
+    self.movementSpeed = 100
     self.speedMultiplier = 0.7
     self.lastDirection = "up"
     self.projectilesFired = {}
 end
 
 function Entity:moveInDirection(direction, dt)
-    self.lastDirection = direction
+    if direction ~= "last" then
+        self.lastDirection = direction
+    else
+        self.direction = lastDirection
+    end
     self.previousX = self.worldX
     self.previousY = self.worldY
 

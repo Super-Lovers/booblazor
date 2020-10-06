@@ -1,6 +1,6 @@
 Object = require "../libs/dependancies/classic"
 local audioSetup = require "audio-setup"
-local state = require "libs/dependancies/stateswitcher"
+state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 
 local menuItems = {}
@@ -38,7 +38,7 @@ if isGameLoaded == false then
         "Play",
         function() 
             mainMenuBackgroundMusicController:stop()
-            state.switch("intro")
+            state.switch("game")
         end)
     createButton(
         0, 0, 0, 0,

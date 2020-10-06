@@ -6,7 +6,6 @@ require "libs/assets"
 screen = require "../libs/dependancies/shack"
 screen:setDimensions(love.graphics.getWidth(), love.graphics.getHeight())
 
-local state = require "libs/dependancies/stateswitcher"
 local tick = require "libs/dependancies/tick"
 local deltatime = 0
 
@@ -18,7 +17,7 @@ createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
-player.hitpoints = 100
+player.hitpoints = 10
 
 local spawnerCollisionPadding = 0
 
@@ -41,6 +40,9 @@ local tiles = {
 }
 local counter = 0
 counter = counter + 1
+
+local spawner_timer = 0;
+local move_cells_timer = 0;
 
 -- local tilesetImage = love.graphics.newImage("/assets/images/tilesbatch.png")
 -- tilesetImage:setFilter("nearest", "linear")
@@ -65,10 +67,15 @@ function love.update(dt)
     tick.update(dt)
     screen:update(dt)
 
-    -- State switcher hack
+    spawner_timer = spawner_timer + dt;
+    if spawner_timer > 1 then
+        tickSpawnerDown()
+        spawner_timer = 0
+    end
+
+    moveCells()
+
     if isGameLoaded == false then
-        tick.recur(tickSpawnerDown, 1)
-        tick.recur(moveCells, dt)
         -- tick.recur(tickCorruption, 1)
 
         createButton(
@@ -551,7 +558,7 @@ function tickSpawnerDown()
                 spawner.currentEggSpawnDelay = spawner.currentEggSpawnDelay - 1
             elseif spawner.currentEggSpawnDelay == 1 then
                 local cell = spawner:spawn()
-                cell.movementSpeed = math.random(3800) + 2000
+                cell.movementSpeed = 5000
                 table.insert(world.entities, cell)
 
                 spawner.currentEggSpawnDelay = spawner.eggSpawnDelay
@@ -569,12 +576,14 @@ function moveCells()
         if entity.role == "cancer cell small" or
            entity.role == "cancer cell big" then
 
-            local directionToMove = entity:getDirection()
-
-            if directionToMove ~= entity.lastDirection then
-                entity:move(directionToMove, deltatime)
-                entity:infest()
+            local rng = math.random(100)
+            local new_drection = "last"
+            if rng < 2 then
+                new_drection = entity:getDirection()
             end
+
+            entity:move(new_drection, deltatime)
+            entity:infest()
 
             -- if (entity.delaySinceLastMove > 1) then
             --     entity.delaySinceLastMove = entity.delaySinceLastMove - 1

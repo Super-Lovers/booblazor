@@ -1,4 +1,3 @@
-local state = require "libs/dependancies/stateswitcher"
 local talkies = require "libs/dependancies/talkies"
 local json = require "libs/dependancies/json"
 local tick = require "libs/dependancies/tick"
@@ -15,7 +14,7 @@ talkies.padding = 15
 local talkSound = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
 talkSound:setVolume(volume)
 talkies.talkSound = talkSound
-local isMessageLoading = true
+local messageLoadingTime = 2
 
 function loadDialogueLines()
     local dialogueFile = io.open("assets/intro_dialogue.json")
@@ -30,38 +29,34 @@ function loadDialogueLines()
 
     talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
         onstart = function()
-            isMessageLoading = true
-            tick.delay(function() isMessageLoading = false end, 3)
+            tick.delay(function() loadNextDialogueLine() end, messageLoadingTime)
         end,
         backgroundColor = {0, 0, 0, 0}
     })
 end
 
-loadDialogueLines()
+function loadNextDialogueLine()
+    currentDialogueIndex = currentDialogueIndex + 1
 
-function love.keypressed(key)
-    if key == "space" and
-       isMessageLoading == false then
-        currentDialogueIndex = currentDialogueIndex + 1
+    if currentDialogueIndex < #dialogue + 1 then
+        talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
+            onstart = function()
+                isMessageLoading = true
+                tick.delay(function() loadNextDialogueLine() end, messageLoadingTime)
+            end,
+            backgroundColor = {0, 0, 0, 0}
+        })
 
-        if currentDialogueIndex < #dialogue + 1 then
-            talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
-                onstart = function()
-                    isMessageLoading = true
-                    tick.delay(function() isMessageLoading = false end, 3)
-                end,
-                backgroundColor = {0, 0, 0, 0}
-            })
+        talkies.onAction()
 
-            talkies.onAction()
-
-        elseif currentDialogueIndex == #dialogue + 1 then
-            talkies.clearMessages()
-            state.switch("game")
-        end
+    elseif currentDialogueIndex == #dialogue + 1 then
+        talkies.clearMessages()
+        state.switch("game")
     end
-
 end
+
+
+loadDialogueLines()
 
 function love.update(deltatime)
     talkies.update(deltatime)
