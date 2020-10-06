@@ -14,7 +14,6 @@ talkies.padding = 15
 local talkSound = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
 talkSound:setVolume(volume)
 talkies.talkSound = talkSound
-local messageLoadingTime = 2
 
 function loadDialogueLines()
     local dialogueFile = io.open("assets/intro_dialogue.json")
@@ -27,36 +26,34 @@ function loadDialogueLines()
 
     dialogue = json.decode(dialogueFileContents)
 
-    talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
-        onstart = function()
-            tick.delay(function() loadNextDialogueLine() end, messageLoadingTime)
-        end,
-        backgroundColor = {0, 0, 0, 0}
-    })
+    talkies.say(
+        dialogue[currentDialogueIndex].title,
+        dialogue[currentDialogueIndex].content,
+        {backgroundColor = {0, 0, 0, 0} }
+    )
 end
-
-function loadNextDialogueLine()
-    currentDialogueIndex = currentDialogueIndex + 1
-
-    if currentDialogueIndex < #dialogue + 1 then
-        talkies.say(dialogue[currentDialogueIndex].title, dialogue[currentDialogueIndex].content, {
-            onstart = function()
-                isMessageLoading = true
-                tick.delay(function() loadNextDialogueLine() end, messageLoadingTime)
-            end,
-            backgroundColor = {0, 0, 0, 0}
-        })
-
-        talkies.onAction()
-
-    elseif currentDialogueIndex == #dialogue + 1 then
-        talkies.clearMessages()
-        state.switch("game")
-    end
-end
-
 
 loadDialogueLines()
+
+function love.keypressed(key)
+    if key == "space" then
+        talkies.onAction()
+        talkies.onAction()
+
+        currentDialogueIndex = currentDialogueIndex + 1
+
+        if currentDialogueIndex == #dialogue + 1 then
+            talkies.clearMessages()
+            state.switch("game")
+        else
+            talkies.say(
+                dialogue[currentDialogueIndex].title,
+                dialogue[currentDialogueIndex].content,
+                {backgroundColor = {0, 0, 0, 0} }
+            )
+        end
+    end
+end
 
 function love.update(deltatime)
     talkies.update(deltatime)

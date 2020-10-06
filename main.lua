@@ -38,7 +38,7 @@ if isGameLoaded == false then
         "Play",
         function() 
             mainMenuBackgroundMusicController:stop()
-            state.switch("game")
+            state.switch("intro")
         end)
     createButton(
         0, 0, 0, 0,
