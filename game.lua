@@ -17,7 +17,7 @@ createWorld()
 -- Creates the player and puts him in the initial game position
 player = Player(world.mapWidth * 0.5 * world.tileSizeX, world.mapHeight * 0.5 * world.tileSizeY, "player")
 player.movementSpeed = 380
-player.hitpoints = 10
+player.hitpoints = 100
 
 local spawnerCollisionPadding = 0
 

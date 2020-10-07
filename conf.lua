@@ -1,7 +1,7 @@
 function love.conf(t)
     t.window.title = "Boob Lazor"
     t.window.icon = "/assets/images/game-icon_01.png"
-    t.console = true
+    t.console = false
 
     --- 640x and 1024x
     t.window.width = 640

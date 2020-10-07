@@ -46,7 +46,7 @@ function Entity:move(direction, deltatime)
     --     Cell.super.moveTowards(self, player, deltatime)
     -- end
 
-    -- self:setIsPlayerInProximity()
+    self:setIsPlayerInProximity()
 end
 
 function Cell:infest()
@@ -98,7 +98,7 @@ function Cell:setIsPlayerInProximity()
             self.isPlayerInProximity = true;
         end
 
-        if distanceToPlayer < 100 then
+        if distanceToPlayer < 150 then
             player:takeDamage(self.damage)
         end
     end
