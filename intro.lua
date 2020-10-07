@@ -1,30 +1,24 @@
-local talkies = require "libs/dependancies/talkies"
-local json = require "libs/dependancies/json"
-local tick = require "libs/dependancies/tick"
+local talkies = require "/libs/dependancies/talkies"
+local json = require "/libs/dependancies/json"
+local tick = require "/libs/dependancies/tick"
 
 local background = love.graphics.newImage("/assets/images/intro_bg.png")
 local doctorb = love.graphics.newImage("/assets/images/intro_character.png")
-local dialogueBox = love.graphics.newImage("assets/images/dialogue_box.png")
+local dialogueBox = love.graphics.newImage("/assets/images/dialogue_box.png")
 
 local dialogue = {}
 local currentDialogueIndex = 1
-talkies.font = love.graphics.newFont("assets/fonts/dpcomic.ttf", 32)
+talkies.font = love.graphics.newFont("/assets/fonts/dpcomic.ttf", 32)
 talkies.textSpeed = "fast"
 talkies.padding = 15
-local talkSound = love.audio.newSource("assets/sounds/dialogue loading_01.wav", "static")
+local talkSound = love.audio.newSource("/assets/sounds/dialogue loading_01.wav", "static")
 talkSound:setVolume(volume)
 talkies.talkSound = talkSound
 
 function loadDialogueLines()
-    local dialogueFile = io.open("assets/intro_dialogue.json")
-    local dialogueFileLines = dialogueFile:lines()
-    local dialogueFileContents = ""
-    
-    for line in dialogueFileLines do
-        dialogueFileContents = dialogueFileContents .. line
-    end
+    local contents, size = love.filesystem.read('/assets/intro_dialogue.json') -- io.open("./assets/intro_dialogue.json")
 
-    dialogue = json.decode(dialogueFileContents)
+    dialogue = json.decode(contents)
 
     talkies.say(
         dialogue[currentDialogueIndex].title,

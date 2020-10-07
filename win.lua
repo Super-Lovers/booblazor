@@ -1,11 +1,11 @@
-local json = require "libs/dependancies/json"
+local json = require "/libs/dependancies/json"
 
 local headingsSize = 32
 local plainTextSize = 24
 
 local background = love.graphics.newImage("/assets/images/intro_bg.png")
-local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", plainTextSize)
-local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", headingsSize)
+local fontText = love.graphics.newFont("/assets/fonts/dpcomic.ttf", plainTextSize)
+local fontHeadings = love.graphics.newFont("/assets/fonts/04B_30__.ttf", headingsSize)
 
 local sections = {}
 

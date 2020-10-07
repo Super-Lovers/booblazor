@@ -1,11 +1,11 @@
 Object = require "../libs/dependancies/classic"
 local audioSetup = require "audio-setup"
-state = require "libs/dependancies/stateswitcher"
-local tick = require "libs/dependancies/tick"
+state = require "/libs/dependancies/stateswitcher"
+local tick = require "/libs/dependancies/tick"
 
 local menuItems = {}
-local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
-local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
+local fontText = love.graphics.newFont("/assets/fonts/dpcomic.ttf", 16)
+local fontHeadings = love.graphics.newFont("/assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
 local background = love.graphics.newImage("/assets/images/intro_bg.png")
@@ -80,7 +80,7 @@ function drawMainMenu()
 
     -- Makes the buttons responsive to the screen size
     local fontSize = 42 + love.graphics.getWidth() / 8 * 0.1 -- For changes in window size
-    love.graphics.setNewFont("assets/fonts/dpcomic.ttf", fontSize)
+    love.graphics.setNewFont("/assets/fonts/dpcomic.ttf", fontSize)
     local buttonWidth = windowWidth * (1 / 3)
     local buttonHeight = 20 + fontSize
     

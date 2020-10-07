@@ -1,11 +1,11 @@
-local json = require "libs/dependancies/json"
+local json = require "/libs/dependancies/json"
 
 local headingsSize = 36
 local plainTextSize = 24
 
 local background = love.graphics.newImage("/assets/images/intro_bg.png")
-local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", plainTextSize)
-local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", headingsSize)
+local fontText = love.graphics.newFont("/assets/fonts/dpcomic.ttf", plainTextSize)
+local fontHeadings = love.graphics.newFont("/assets/fonts/04B_30__.ttf", headingsSize)
 
 local sections = {}
 
@@ -24,15 +24,9 @@ backButton.posX = backButton.posX - backButton.sizeWidth / 2
 backButton.posY = backButton.posY - backButton.sizeHeight
 
 function loadPageSections()
-    local sectionsFile = io.open("assets/more.json")
-    local sectionsFileLines = sectionsFile:lines()
-    local sectionsFileContents = ""
-    
-    for line in sectionsFileLines do
-        sectionsFileContents = sectionsFileContents .. line
-    end
+    local contents, size = love.filesystem.read('/assets/more.json')
 
-    sections = json.decode(sectionsFileContents)
+    sections = json.decode(contents)
 end
 
 loadPageSections()

@@ -1,12 +1,12 @@
-local slam = require "libs/dependancies/slam"
-require "libs/map"
-require "libs/entity"
-require "libs/player"
-require "libs/assets"
+local slam = require "/libs/dependancies/slam"
+require "/libs/map"
+require "/libs/entity"
+require "/libs/player"
+require "/libs/assets"
 screen = require "../libs/dependancies/shack"
 screen:setDimensions(love.graphics.getWidth(), love.graphics.getHeight())
 
-local tick = require "libs/dependancies/tick"
+local tick = require "/libs/dependancies/tick"
 local deltatime = 0
 
 local windowWidth = love.graphics.getWidth()
@@ -26,17 +26,17 @@ table.insert(world.entities, player)
 -- Playing, Paused, Title Screen
 local gameState = "playing"
 local menuItems = {}
-local fontText = love.graphics.newFont("assets/fonts/dpcomic.ttf", 16)
-local fontHeadings = love.graphics.newFont("assets/fonts/04B_30__.ttf", 92)
+local fontText = love.graphics.newFont("/assets/fonts/dpcomic.ttf", 16)
+local fontHeadings = love.graphics.newFont("/assets/fonts/04B_30__.ttf", 92)
 love.graphics.setFont(fontHeadings)
 local logoTitle = love.graphics.newImage("/assets/images/game_title.png")
-local playerImage = love.graphics.newImage("assets/images/picetto.png")
-local playerLaserImage = love.graphics.newImage("assets/images/laser.png")
+local playerImage = love.graphics.newImage("/assets/images/picetto.png")
+local playerLaserImage = love.graphics.newImage("/assets/images/laser.png")
 
 local tiles = {
-    ["safe-tile"] = love.graphics.newImage("assets/images/tile-safe.png"),
-    ["transitioning-tile"] = love.graphics.newImage("assets/images/tile-transitioning.png"),
-    ["corrupted-tile"] = love.graphics.newImage("assets/images/tile-corrupted.png")
+    ["safe-tile"] = love.graphics.newImage("/assets/images/tile-safe.png"),
+    ["transitioning-tile"] = love.graphics.newImage("/assets/images/tile-transitioning.png"),
+    ["corrupted-tile"] = love.graphics.newImage("/assets/images/tile-corrupted.png")
 }
 local counter = 0
 counter = counter + 1
@@ -291,7 +291,7 @@ function drawMainMenu()
 
     -- Makes the buttons responsive to the screen size
     local fontSize = 42 + world.tileSizeX * 0.1 -- For changes in window size
-    love.graphics.setNewFont("assets/fonts/dpcomic.ttf", fontSize)
+    love.graphics.setNewFont("/assets/fonts/dpcomic.ttf", fontSize)
     local buttonWidth = windowWidth * (1 / 3)
     local buttonHeight = 20 + fontSize
 
@@ -606,7 +606,7 @@ function drawProjectiles()
         if #entity.projectilesFired > 0 then
             for j, projectile in pairs(entity.projectilesFired) do
                 if isObjectVisibleInCamera(projectile) then
-                    local image = love.graphics.newImage("assets/images/laser_projectile.png")
+                    local image = love.graphics.newImage("/assets/images/laser_projectile.png")
     
                     local drawable = love.graphics.draw(image, projectile.worldX, projectile.worldY, projectile.angle, 1, 1, 2, 28)
                     
